@@ -29,6 +29,10 @@ public class PathLock {
         while (true) {
             UI.userPrompt();
 
+            if (!scanner.hasNextLine()){
+                break;
+            }
+
             String input = scanner.nextLine().trim();
 
             if (input.equalsIgnoreCase("exit")) {
