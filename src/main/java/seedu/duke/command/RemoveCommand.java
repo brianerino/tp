@@ -2,25 +2,39 @@ package seedu.duke.command;
 
 import seedu.duke.module.ModuleList;
 import seedu.duke.storage.Storage;
+
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class RemoveCommand extends Command {
     private final String moduleCode;
+    private final Logger logger = Logger.getLogger(RemoveCommand.class.getName());
+
     public RemoveCommand(String moduleCode) {
         this.moduleCode = moduleCode.toUpperCase();
     }
 
     @Override
     public String execute(ModuleList modules) {
+        assert modules != null : "ModuleList should not be null";
+        assert moduleCode != null && !moduleCode.isEmpty() : "ModuleCode should not be null";
+
+        logger.log(Level.FINE, "Executing RemoveCommand for {0}", moduleCode);
+
         boolean removed = modules.removeModule(moduleCode);
         try {
             Storage.save(modules.completedModules);
+            logger.log(Level.INFO, "Storage updated after removing module: {0}", moduleCode);
         } catch (IOException e) {
+            logger.log(Level.SEVERE, "Failed to save after removing module: {0}", moduleCode);
             throw new RuntimeException(e);
         }
         if (removed) {
+            logger.log(Level.INFO, "Module removed successfully: {0}", moduleCode);
             return moduleCode + " has been removed";
         } else {
+            logger.log(Level.WARNING, "Attempted to remove non-existing module: {0}", moduleCode);
             return moduleCode + " is not in your module list";
         }
     }
