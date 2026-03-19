@@ -42,18 +42,19 @@ public class PathLock {
             } else if (input.equalsIgnoreCase("help")) {
                 UI.help();
             } else {
-                Command command = Parser.parseCommand(input);
-
-                if (command == null) {
-                    UI.unknownCommand();
-                    continue;
-                }
-
                 try {
+                    Command command = Parser.parseCommand(input);
+
+                    if (command == null) {
+                        UI.unknownCommand();
+                        continue;
+                    }
+
                     String result = command.execute(modules);
                     System.out.println(result);
                 } catch (Exception e) {
                     System.out.println(e.getMessage());
+                    UI.dash();
                 }
             }
         }
