@@ -39,10 +39,4 @@ public class UI {
         dash();
     }
 
-    public static void help() {
-        dash();
-        System.out.println("fam idk the commands either rn xd");
-        System.out.println("theres uhh 'help' !! and oh oh 'exit'");
-        dash();
-    }
 }

@@ -9,6 +9,7 @@ import seedu.duke.command.ListNeededCommand;
 import seedu.duke.command.CountCommand;
 import seedu.duke.command.AddToPlannerCommand;
 import seedu.duke.exception.MissingCommandException;
+import seedu.duke.command.HelpCommand;
 
 public class Parser {
 
@@ -47,6 +48,18 @@ public class Parser {
             String moduleCode = input.substring(5).trim();
             return new AddToPlannerCommand(moduleCode,semester);
 
+        }
+
+        if (input.equals("help")) {
+            return new HelpCommand();
+        }
+
+        if (input.startsWith("help ")) {
+            String topic = input.substring(5).trim();
+            if (topic.isEmpty()) {
+                return new HelpCommand();
+            }
+            return new HelpCommand(topic);
         }
 
         return null;

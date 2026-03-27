@@ -30,8 +30,6 @@ public class PathLock {
             if (input.equalsIgnoreCase("exit")) {
                 UI.closing();
                 break;
-            } else if (input.equalsIgnoreCase("help")) {
-                UI.help();
             } else {
                 try {
                     Command command = Parser.parseCommand(input);
