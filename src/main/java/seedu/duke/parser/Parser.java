@@ -69,7 +69,6 @@ public class Parser {
                 System.out.println(moduleCode + " " + semester);
                 return new EditPlannerCommand(moduleCode, semester);
             }
-
             if (input.startsWith("remove")) {
                 if (input.length() < 8) {
                     throw new MissingCommandException("Please input module code after 'remove '");
