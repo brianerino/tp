@@ -8,11 +8,12 @@ import seedu.duke.exception.DuplicateException;
 import seedu.duke.module.Module;
 import seedu.duke.module.ModuleList;
 import seedu.duke.planner.PlannerList;
+import seedu.duke.profile.UserProfile;
 
 public class ListIncompleteCommandTest {
     @Test
     public void execute_noCompletedModules_returnsAllIncompleteModules() {
-        AppState state = new AppState(new ModuleList(), new PlannerList());
+        AppState state = new AppState(new ModuleList(), new PlannerList(), new UserProfile("Test User", 3.50));
         ListIncompleteCommand command = new ListIncompleteCommand();
         String result = command.execute(state);
         assertTrue(result.contains("Incomplete modules:"));
@@ -27,7 +28,7 @@ public class ListIncompleteCommandTest {
         modules.addModule(new Module("CS2113",4));
         modules.addModule(new Module("CS1231",4));
         modules.addModule(new Module("CP3880",10));
-        AppState state = new AppState(modules, new PlannerList());
+        AppState state = new AppState(modules, new PlannerList(), new UserProfile("Test User", 3.50));
         ListIncompleteCommand command = new ListIncompleteCommand();
         String result = command.execute(state);
         assertTrue(result.contains("Incomplete modules:"));

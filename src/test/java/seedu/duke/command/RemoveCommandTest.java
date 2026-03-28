@@ -4,13 +4,15 @@ import org.junit.jupiter.api.Test;
 import seedu.duke.appState.AppState;
 import seedu.duke.module.ModuleList;
 import seedu.duke.planner.PlannerList;
+import seedu.duke.profile.UserProfile;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RemoveCommandTest {
     @Test
     public void execute_existingModule_removedSuccessfully() {
         ModuleList modules = new ModuleList();
-        AppState state = new AppState(modules, new PlannerList());
+        AppState state = new AppState(modules, new PlannerList(), new UserProfile("Test User", 3.50));
 
         DoneCommand doneCommand = new DoneCommand("CS1231",4);
         doneCommand.execute(state);
@@ -25,7 +27,7 @@ public class RemoveCommandTest {
     @Test
     public void execute_moduleNotInList_returnsErrorMessage() {
         ModuleList modules = new ModuleList();
-        AppState state = new AppState(modules, new PlannerList());
+        AppState state = new AppState(modules, new PlannerList(), new UserProfile("Test User", 3.50));
 
         RemoveCommand command = new RemoveCommand("CS1231");
         String result = command.execute(state);
@@ -36,7 +38,7 @@ public class RemoveCommandTest {
     @Test
     public void execute_lowercaseInput_convertedToUppercase() {
         ModuleList modules = new ModuleList();
-        AppState state = new AppState(modules, new PlannerList());
+        AppState state = new AppState(modules, new PlannerList(), new UserProfile("Test User", 3.50));
         DoneCommand doneCommand = new DoneCommand("CS1231", 4);
         doneCommand.execute(state);
 

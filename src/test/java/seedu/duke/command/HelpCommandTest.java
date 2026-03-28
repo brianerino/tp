@@ -4,12 +4,14 @@ import org.junit.jupiter.api.Test;
 import seedu.duke.appState.AppState;
 import seedu.duke.module.ModuleList;
 import seedu.duke.planner.PlannerList;
+import seedu.duke.profile.UserProfile;
+
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HelpCommandTest {
     @Test
     public void execute_generalHelp_returnsGroupedCommandList() {
-        AppState state = new AppState(new ModuleList(), new PlannerList());
+        AppState state = new AppState(new ModuleList(), new PlannerList(), new UserProfile("Test User", 3.50));
         HelpCommand command = new HelpCommand();
         String result = command.execute(state);
         assertTrue(result.contains("PATHLOCK HELP"));
@@ -25,7 +27,7 @@ public class HelpCommandTest {
 
     @Test
     public void execute_helpDone_returnsDetailedHelpForDone() {
-        AppState state = new AppState(new ModuleList(), new PlannerList());
+        AppState state = new AppState(new ModuleList(), new PlannerList(), new UserProfile("Test User", 3.50));
         HelpCommand command = new HelpCommand("done");
         String result = command.execute(state);
         assertTrue(result.contains("COMMAND: done"));
@@ -37,7 +39,7 @@ public class HelpCommandTest {
 
     @Test
     public void execute_helpListCompleted_returnsDetailedHelpForListCompleted() {
-        AppState state = new AppState(new ModuleList(), new PlannerList());
+        AppState state = new AppState(new ModuleList(), new PlannerList(), new UserProfile("Test User", 3.50));
         HelpCommand command = new HelpCommand("list completed");
         String result = command.execute(state);
         assertTrue(result.contains("COMMAND: list completed"));
@@ -47,7 +49,7 @@ public class HelpCommandTest {
 
     @Test
     public void execute_helpUnknownTopic_returnsNotFoundMessage() {
-        AppState state = new AppState(new ModuleList(), new PlannerList());
+        AppState state = new AppState(new ModuleList(), new PlannerList(), new UserProfile("Test User", 3.50));
         HelpCommand command = new HelpCommand("nonsense");
         String result = command.execute(state);
         assertTrue(result.contains("No detailed help found"));
@@ -57,7 +59,7 @@ public class HelpCommandTest {
 
     @Test
     public void execute_helpTopicWithExtraSpaces_returnsCorrectDetailedHelp() {
-        AppState state = new AppState(new ModuleList(), new PlannerList());
+        AppState state = new AppState(new ModuleList(), new PlannerList(), new UserProfile("Test User", 3.50));
         HelpCommand command = new HelpCommand("   done   ");
         String result = command.execute(state);
         assertTrue(result.contains("COMMAND: done"));
