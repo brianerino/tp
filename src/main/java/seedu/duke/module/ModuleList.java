@@ -14,7 +14,7 @@ public class ModuleList {
 
     private static final int TOTAL_GRADUATION_MCS = 160;
 
-    private final Map<String, Module> allModules;
+    public final Map<String, Module> allModules;
 
     public ModuleList() {
         this.allModules = ModuleLoader.loadModules();
@@ -52,7 +52,7 @@ public class ModuleList {
     /**
      * Checks if the given module code is a recognised required module.
      */
-    private boolean isRecognisedModule(String moduleCode) {
+    public boolean isRecognisedModule(String moduleCode) {
         return allModules.containsKey(moduleCode.toUpperCase());
     }
 

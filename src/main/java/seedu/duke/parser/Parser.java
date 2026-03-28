@@ -2,6 +2,7 @@ package seedu.duke.parser;
 
 import seedu.duke.command.Command;
 import seedu.duke.command.DoneCommand;
+import seedu.duke.command.ListPlannerCommand;
 import seedu.duke.command.RemoveCommand;
 import seedu.duke.command.ListCompletedCommand;
 import seedu.duke.command.ListIncompleteCommand;
@@ -47,10 +48,14 @@ public class Parser {
         }
 
         if (input.startsWith("y")) {
-            String semester = input.substring(0, 3);
+            String semester = input.substring(0, 4);
             String moduleCode = input.substring(5).trim();
             return new AddToPlannerCommand(moduleCode,semester);
 
+        }
+
+        if (input.equals("planner")) {
+            return new ListPlannerCommand();
         }
 
         return null;
