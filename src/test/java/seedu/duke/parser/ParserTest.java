@@ -95,17 +95,17 @@ public class ParserTest {
 
     @Test
     public void parseDone_missingMcValue_throwsIllegalArgumentException() {
-        assertThrows(IllegalArgumentException.class, () -> Parser.parseDone("done CS2113 /mc"));
+        assertThrows(IllegalArgumentException.class, () -> Parser.parseCommand("done CS2113 /mc"));
     }
 
     @Test
     public void parseDone_missingModuleCodeBeforeMc_throwsIllegalArgumentException() {
-        assertThrows(IllegalArgumentException.class, () -> Parser.parseDone("done /mc 4"));
+        assertThrows(IllegalArgumentException.class, () -> Parser.parseCommand("done /mc 4"));
     }
 
     @Test
     public void parseDone_nonNumericMc_throwsIllegalArgumentException() {
-        assertThrows(IllegalArgumentException.class, () -> Parser.parseDone("done CS2113 /mc abc"));
+        assertThrows(IllegalArgumentException.class, () -> Parser.parseCommand("done CS2113 /mc abc"));
     }
 
     @Test

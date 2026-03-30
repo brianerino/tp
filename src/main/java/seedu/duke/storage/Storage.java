@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -15,18 +14,14 @@ import seedu.duke.module.Module;
 
 public class Storage {
     private static final Logger logger = Logger.getLogger(Storage.class.getName());
-    private static String filePath = "data/duke.txt";
+    private static String filePath;
 
-    public Storage() {
-        this("data/duke.txt"); // default
-    }
-
-    public Storage(String filePath) {
-        this.filePath = filePath;
+    public Storage(String username) {
+        assert username != null && !username.trim().isEmpty() : "Username cannot be empty";
+        this.filePath = "data/users/" + username.trim() + "_modules.txt";
     }
 
     public List<Module> load() throws IOException {
-
         File file = new File(filePath);
 
         logger.info("Loading modules from file: " + filePath);
@@ -37,16 +32,19 @@ public class Storage {
 
         if (!file.exists()) {
             file.createNewFile();
-            logger.warning("Save file not found. Created new file at " + filePath);
+            logger.warning("Module file not found. Created new file at " + filePath);
         }
 
         List<Module> modules = new ArrayList<>();
 
         Scanner scanner = new Scanner(file);
         while (scanner.hasNextLine()) {
-            String line = scanner.nextLine();
-            logger.log(Level.FINE, "Reading line: {0}", line);
+            String line = scanner.nextLine().trim();
+            if (line.isEmpty()) {
+                continue;
+            }
 
+            logger.log(Level.FINE, "Reading line: {0}", line);
             Module module = getModule(line);
             modules.add(module);
         }
@@ -54,7 +52,7 @@ public class Storage {
         return modules;
     }
 
-    private static Module getModule(String line) {
+    private Module getModule(String line) {
         assert !line.isBlank() : "Line in storage file should not be blank";
 
         String[] parts = line.split("\\|");
@@ -67,27 +65,26 @@ public class Storage {
         assert mc > 0 : "Modular credits should be positive";
 
         Module module = new Module(code, mc);
-        assert module != null : "Module object should be created successfully";
-
         module.markCompleted();
         return module;
     }
 
-    public static void save(List<Module> modules) throws IOException {
+    public void save(List<Module> modules) throws IOException {
+        assert modules != null : "Modules list should not be null";
+
         File file = new File(filePath);
         File parent = file.getParentFile();
-        if (parent != null) {
-            parent.mkdirs();
-        }
-        
+        assert parent != null : "Parent directory should exist for file path";
+        parent.mkdirs();
+
         FileWriter writer = new FileWriter(filePath);
 
         for (Module module : modules) {
-            writer.write(module.getModuleCode() + "|" +
-                    module.getModularCredits());
-            writer.write("\n");
+            writer.write(module.getModuleCode() + "|" + module.getModularCredits());
+            writer.write(System.lineSeparator());
         }
 
         writer.close();
+        logger.info("Saved modules to file: " + filePath);
     }
 }

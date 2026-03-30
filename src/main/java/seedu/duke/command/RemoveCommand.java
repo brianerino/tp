@@ -18,15 +18,22 @@ public class RemoveCommand extends Command {
 
     @Override
     public String execute(AppState appState) {
+        assert appState != null : "AppState should not be null";
+
         ModuleList modules = appState.getModule();
+        String username = appState.getProfile().getName();
+        Storage storage = new Storage(username);
+
+
         assert modules != null : "ModuleList should not be null";
         assert moduleCode != null && !moduleCode.isEmpty() : "ModuleCode should not be null";
 
         logger.log(Level.FINE, "Executing RemoveCommand for {0}", moduleCode);
 
         boolean removed = modules.removeModule(moduleCode);
+
         try {
-            Storage.save(modules.getCompletedModules());
+            storage.save(modules.getCompletedModules());
             logger.log(Level.FINE, "Storage updated after removing module: {0}", moduleCode);
         } catch (IOException e) {
             logger.log(Level.SEVERE, "Failed to save after removing module: {0}", moduleCode);

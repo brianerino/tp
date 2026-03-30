@@ -25,12 +25,12 @@ public class PathLock {
     @SuppressWarnings("checkstyle:RightCurly")
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        ModuleList modules = getModuleList();
         PlannerList course = new PlannerList();
 
         UI.opening();
 
         UserProfile profile = getOrCreateProfile(scanner);
+        ModuleList modules = getModuleList(profile.getName());
         AppState appState = new AppState(modules, course, profile);
 
         while (true) {
@@ -64,8 +64,8 @@ public class PathLock {
         scanner.close();
     }
 
-    private static ModuleList getModuleList() {
-        Storage storage = new Storage();
+    private static ModuleList getModuleList(String username) {
+        Storage storage = new Storage(username);
         ModuleList modules = new ModuleList();
 
         try {
@@ -74,26 +74,40 @@ public class PathLock {
                 try {
                     String code = saved.getModuleCode();
                     int mc = saved.getModularCredits();
-                    if (modules.isRecognisedModule(code)){
+
+                    if (modules.isRecognisedModule(code)) {
                         modules.addModule(code);
                     } else {
                         modules.addExternalModule(code, mc);
                     }
                 } catch (DuplicateException | IllegalArgumentException e) {
-                    // skip invalid or duplicate entries from save file
+                    // skip invalid or duplicate entries
                 }
             }
         } catch (IOException e) {
-            // no saved data, start fresh
+            // no saved data
         }
+
         return modules;
     }
 
     private static UserProfile getOrCreateProfile(Scanner scanner) {
         ProfileStorage profileStorage = new ProfileStorage();
 
+        System.out.print("Enter your name: ");
+        if (!scanner.hasNextLine()) {
+            throw new NoSuchElementException("No input provided for name.");
+        }
+
+        String name = scanner.nextLine().trim();
+
+        while (name.isEmpty()) {
+            System.out.print("Name cannot be empty. Enter your name: ");
+            name = scanner.nextLine().trim();
+        }
+
         try {
-            UserProfile savedProfile = profileStorage.loadProfile();
+            UserProfile savedProfile = profileStorage.loadProfile(name); //
             if (savedProfile != null) {
                 System.out.println("Welcome back, " + savedProfile.getName() + "!");
                 System.out.println("Saved GPA: " + String.format("%.2f", savedProfile.getGpa()));
@@ -105,17 +119,6 @@ public class PathLock {
         } catch (IOException e) {
             System.out.println("Could not load saved profile. Creating a new one.");
             UI.dash();
-        }
-
-        System.out.print("Enter your name: ");
-        if (!scanner.hasNextLine()) {
-            throw new NoSuchElementException("No input provided for name.");
-        }
-        String name = scanner.nextLine().trim();
-
-        while (name.isEmpty()) {
-            System.out.print("Name cannot be empty. Enter your name: ");
-            name = scanner.nextLine().trim();
         }
 
         double gpa = promptForGpa(scanner);

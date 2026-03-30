@@ -1,4 +1,4 @@
-package seedu.duke.command.plannerCommand;
+package seedu.duke.command.plannercommand;
 
 import seedu.duke.appstate.AppState;
 import seedu.duke.command.Command;

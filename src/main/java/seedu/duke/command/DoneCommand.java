@@ -11,7 +11,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class DoneCommand extends Command {
-
     private final Logger logger = Logger.getLogger(DoneCommand.class.getName());
 
     private final String moduleCode;
@@ -24,6 +23,9 @@ public class DoneCommand extends Command {
 
     @Override
     public String execute(AppState appState) {
+        String username = appState.getProfile().getName();
+        Storage storage = new Storage(username);
+
         ModuleList modules = appState.getModule();
         assert modules != null : "ModuleList should not be null";
         assert moduleCode != null && !moduleCode.isEmpty() : "ModuleCode should not be null";
@@ -38,9 +40,9 @@ public class DoneCommand extends Command {
 
         try {
             if (modules.isRecognisedModule(moduleCode)) {
-                return handleInternalModule(modules);
+                return handleInternalModule(modules, storage);
             } else {
-                return handleExternalModule(modules);
+                return handleExternalModule(modules, storage);
             }
         } catch (DuplicateException e) {
             logger.log(Level.WARNING, "Duplicate module code: {0}", moduleCode);
@@ -56,21 +58,21 @@ public class DoneCommand extends Command {
         }
     }
 
-    private String handleInternalModule(ModuleList modules) throws DuplicateException, IOException {
+    private String handleInternalModule(ModuleList modules,Storage storage) throws DuplicateException, IOException {
         int expectedMc = modules.getMcForModule(moduleCode);
 
         ModuleValidator.validateInternalMc(mc, expectedMc, moduleCode);
 
         modules.addModule(moduleCode);
-        Storage.save(modules.getCompletedModules());
+        storage.save(modules.getCompletedModules());
 
         logger.log(Level.FINE, "Internal module added: {0} ({1} MCs)",
                 new Object[]{moduleCode, expectedMc});
-        return moduleCode + " has been added (" + expectedMc + " MCs).";
+        return moduleCode + " has been added.";
     }
 
 
-    private String handleExternalModule(ModuleList modules) throws DuplicateException, IOException {
+    private String handleExternalModule(ModuleList modules,Storage storage) throws DuplicateException, IOException {
         if (mc == null) {
             return "\"" + moduleCode + "\" is not a recognised module. "
                     + "If this is an external module, provide its MCs using /mc. "
@@ -80,12 +82,10 @@ public class DoneCommand extends Command {
         ModuleValidator.validateMc(mc);
 
         modules.addExternalModule(moduleCode, mc);
-        Storage.save(modules.getCompletedModules());
+        storage.save(modules.getCompletedModules());
 
         logger.log(Level.FINE, "External module added: {0} ({1} MCs)",
                 new Object[]{moduleCode, mc});
-        return moduleCode + " has been added as an external module (" + mc + " MCs).";
+        return moduleCode + " has been added.";
     }
-
-
 }

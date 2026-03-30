@@ -11,18 +11,22 @@ import java.util.logging.Logger;
 
 public class ProfileStorage {
     private static final Logger logger = Logger.getLogger(ProfileStorage.class.getName());
-    private static final String PROFILE_FILE_PATH = "data/profile.txt";
+    private String getProfilePath(String username) {
+        return "data/users/" + username.trim() + "_profile.txt";
+    }
 
-    public UserProfile loadProfile() throws IOException {
-        File file = new File(PROFILE_FILE_PATH);
+
+    public UserProfile loadProfile(String username) throws IOException {
+        assert username != null && !username.trim().isEmpty() : "Username cannot be empty";
+
+        String profilePath = getProfilePath(username);
+        File file = new File(profilePath);
 
         File parent = file.getParentFile();
         assert parent != null : "Parent directory should exist for profile path";
         parent.mkdirs();
 
         if (!file.exists()) {
-            file.createNewFile();
-            logger.info("Profile file not found. Created new file at " + PROFILE_FILE_PATH);
             return null;
         }
 
@@ -36,7 +40,7 @@ public class ProfileStorage {
             String[] parts = line.split("\\|");
             if (parts.length != 2) {
                 scanner.close();
-                throw new IOException("Invalid profile format in " + PROFILE_FILE_PATH);
+                throw new IOException("Invalid profile format in " + profilePath);
             }
 
             String name = parts[0].trim();
@@ -51,12 +55,20 @@ public class ProfileStorage {
         return null;
     }
 
+
     public void saveProfile(UserProfile profile) throws IOException {
         assert profile != null : "Profile should not be null";
 
-        FileWriter writer = new FileWriter(PROFILE_FILE_PATH);
+        String profilePath = getProfilePath(profile.getName());
+        File file = new File(profilePath);
+
+        File parent = file.getParentFile();
+        assert parent != null : "Parent directory should exist for profile path";
+        parent.mkdirs();
+
+        FileWriter writer = new FileWriter(file);
         writer.write(profile.getName() + "|" + profile.getGpa());
-        writer.write("\n");
+        writer.write(System.lineSeparator());
         writer.close();
 
         logger.log(Level.INFO, "Saved profile for user: {0}", profile.getName());

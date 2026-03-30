@@ -9,12 +9,13 @@ import seedu.duke.profile.UserProfile;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RemoveCommandTest {
+    private final int mc = 4;
     @Test
     public void execute_existingModule_removedSuccessfully() {
         ModuleList modules = new ModuleList();
         AppState state = new AppState(modules, new PlannerList(), new UserProfile("Test User", 3.50));
 
-        DoneCommand doneCommand = new DoneCommand("CS1231",4);
+        DoneCommand doneCommand = new DoneCommand("CS1231", mc);
         doneCommand.execute(state);
 
         RemoveCommand removeCommand = new RemoveCommand("CS1231");
@@ -39,7 +40,7 @@ public class RemoveCommandTest {
     public void execute_lowercaseInput_convertedToUppercase() {
         ModuleList modules = new ModuleList();
         AppState state = new AppState(modules, new PlannerList(), new UserProfile("Test User", 3.50));
-        DoneCommand doneCommand = new DoneCommand("CS1231", 4);
+        DoneCommand doneCommand = new DoneCommand("CS1231", mc);
         doneCommand.execute(state);
 
         RemoveCommand removeCommand = new RemoveCommand("cs1231");
