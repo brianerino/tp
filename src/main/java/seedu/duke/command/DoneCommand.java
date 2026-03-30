@@ -20,8 +20,8 @@ public class DoneCommand extends Command {
         this.moduleCode = moduleCode.toUpperCase();
         this.mc = mc;
     }
-//@@author shiyong52
-@Override
+    //@@author shiyong52
+    @Override
     public String execute(AppState appState) {
         String username = appState.getProfile().getName();
         Storage storage = new Storage(username);
