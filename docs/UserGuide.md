@@ -13,6 +13,8 @@ PathLock is a **desktop app for planning your CEG modules**, optimised for use v
     - [Listing incomplete modules: `list incomplete`](#listing-incomplete-modules--list-incomplete)
     - [Listing all required modules: `list needed`](#listing-all-required-modules--list-needed)
     - [Counting MC progress: `count`](#counting-mc-progress--count)
+    - [Viewing prerequisites: `prereq MODULE_CODE`](#viewing-prerequisites--prereq-module_code)
+    - [Viewing modules unlocked: `postreq MODULE_CODE`](#viewing-modules-unlocked--postreq-module_code)
     - [Adding a module to your planner: `planner add MODULE_CODE y#s#`](#adding-a-module-to-your-planner--planner-add)
     - [Removing a module from your planner: `planner remove MODULE_CODE`](#removing-a-module-from-your-planner--planner-remove)
     - [Shifting a module to another semester on your planner: `planner edit MODULE_CODE y#s#`](#shifting-a-module-on-your-planner--planner-edit)
@@ -142,7 +144,7 @@ Modules required for graduation:
 
 #### Counting MC progress : `count`
 
-Shows your completed and remaining MC progress towards the 160 MCs required for graduation.
+Shows your completed and remaining MC progress towards the 160 MCs required for graduation. The count includes both internal CEG modules and any external modules you have added via `done MODULE_CODE /mc NUMBER`.
 
 **Format:** `count`
 
@@ -151,6 +153,58 @@ Shows your completed and remaining MC progress towards the 160 MCs required for 
 Completed: 40 / 160 MCs (25.0%)
 Incomplete: 120 MCs (75.0%)
 ```
+
+#### Viewing prerequisites : `prereq MODULE_CODE`
+
+Shows the prerequisites needed before taking a specified module. Only modules within the CEG curriculum are recognised.
+
+**Format:** `prereq MODULE_CODE`
+
+**Examples:**
+- `prereq CS2113` — shows prerequisites for CS2113
+- `prereq EE2211` — shows prerequisites for EE2211
+
+**Example output (`prereq CS2113`):**
+```
+Prerequisites for CS2113: CS2040C
+```
+
+**Example output (`prereq EE2211`):**
+```
+Prerequisites for EE2211: CS1010, MA1511, MA1508E
+```
+
+**Example output (module with no prerequisites):**
+```
+CS1010 has no prerequisites.
+```
+
+**Example output (unrecognised module):**
+```
+FAKE1234 is not a recognised module.
+```
+
+#### Viewing modules unlocked : `postreq MODULE_CODE`
+
+Shows the CEG modules that are unlocked by completing a specified module. In other words, it lists all CEG modules that have the given module as a prerequisite.
+
+**Format:** `postreq MODULE_CODE`
+
+**Examples:**
+- `postreq CS1010` — shows CEG modules that require CS1010
+- `postreq CS2040C` — shows CEG modules that require CS2040C
+
+**Example output (`postreq CS1010`):**
+```
+Modules unlocked by CS1010: EE2211, CG2111A, CG2028, CS2040C, CS2107, EE2026
+```
+
+**Example output (module that does not unlock any others):**
+```
+EE4204 does not unlock any other modules.
+```
+
+> **Note:** Only modules within the CEG curriculum are checked. Modules outside the CEG required list will not appear in the results.
 
 ---
 ### Module Planner Commands
@@ -195,6 +249,8 @@ Incomplete: 120 MCs (75.0%)
 | List incomplete modules | `list incomplete`              | `list incomplete`         |
 | List all required modules | `list needed`                  | `list needed`             |
 | Count MC progress | `count`                        | `count`                   |
+| View prerequisites | `prereq MODULE_CODE`           | `prereq CS2113`           |
+| View modules unlocked | `postreq MODULE_CODE`          | `postreq CS1010`          |
 | Add module to planner | `planner add MODULE_CODE y#s#` | `planner add CS1010 y1s1` |
 | View planner | `planner list`                 | `planner list`            |
 | Exit PathLock | `exit`                         | `exit`                    |
