@@ -55,7 +55,11 @@ public class HelpCommand extends Command {
 
         // Module Planner
         sb.append("MODULE PLANNER COMMANDS\n");
-        sb.append("  y...                        - Semester planner command (coming soon)\n\n");
+        sb.append("  planner list                          - Show all modules in your planner\n");
+        sb.append("  planner add MODULE_CODE SEMESTER      - Add a module to a semester\n");
+        sb.append("  planner edit MODULE_CODE SEMESTER     - Move a module to a different semester\n");
+        sb.append("  planner remove MODULE_CODE            - Remove a module from your planner\n");
+        sb.append("  (Valid semesters: y1s1, y1s2, y2s1, y2s2, y3s1, y3s2, y4s1, y4s2)\n\n");
 
         // Pathlock Commands
         sb.append("PATHLOCK SYSTEM COMMANDS\n");
@@ -85,38 +89,38 @@ public class HelpCommand extends Command {
     private String normaliseTopic(String input) {
         String trimmed = input.trim().toLowerCase();
 
-        if (trimmed.equals("done")) {
+        switch (trimmed) {
+        case "done":             
             return "done";
-        }
-        if (trimmed.equals("remove")) {
+        case "remove":           
             return "remove";
-        }
-        if (trimmed.equals("count")) {
+        case "count":            
             return "count";
-        }
-        if (trimmed.equals("list completed")) {
+        case "list completed":   
             return "list completed";
-        }
-        if (trimmed.equals("list incomplete")) {
+        case "list incomplete":  
             return "list incomplete";
-        }
-        if (trimmed.equals("list needed")) {
+        case "list needed":      
             return "list needed";
-        }
-        if (trimmed.equals("prereq")) {
+        case "prereq":           
             return "prereq";
-        }
-        if (trimmed.equals("postreq")) {
+        case "postreq":          
             return "postreq";
-        }
-        if (trimmed.equals("help")) {
+        case "planner list":    
+            return "planner list";
+        case "planner add":      
+            return "planner add";
+        case "planner edit":    
+            return "planner edit";
+        case "planner remove":  
+            return "planner remove";
+        case "help":           
             return "help";
-        }
-        if (trimmed.equals("exit")) {
+        case "exit":          
             return "exit";
+        default:             
+            return trimmed;
         }
-
-        return trimmed;
     }
 
     private Map<String, String> buildHelpMap() {
@@ -240,6 +244,68 @@ public class HelpCommand extends Command {
                         + "  postreq CS2113\n\n"
                         + "Example output:\n"
                         + "  Modules unlocked by CS2113: CP3880, CP3200\n"
+                        + dash);
+
+        helpMap.put("planner list",
+                dash + "\n"
+                        + "COMMAND: planner list\n"
+                        + dash + "\n"
+                        + "Purpose:\n"
+                        + "  Displays all modules currently in your semester planner.\n\n"
+                        + "Usage:\n"
+                        + "  planner list\n\n"
+                        + "Example output:\n"
+                        + "  Semester: 1\n"
+                        + "  CS1010\n"
+                        + "  Semester: 2\n"
+                        + "  CS1231\n"
+                        + "  ...\n"
+                        + dash);
+
+        helpMap.put("planner add",
+                dash + "\n"
+                        + "COMMAND: planner add\n"
+                        + dash + "\n"
+                        + "Purpose:\n"
+                        + "  Adds a module to a specific semester in your planner.\n\n"
+                        + "Usage:\n"
+                        + "  planner add MODULE_CODE SEMESTER\n\n"
+                        + "Valid semesters: y1s1, y1s2, y2s1, y2s2, y3s1, y3s2, y4s1, y4s2\n\n"
+                        + "Example:\n"
+                        + "  planner add CS2113 y2s1\n\n"
+                        + "Example output:\n"
+                        + "  Module CS2113 added to y2s1.\n"
+                        + "  Current workload for y2s1: 4 MCs\n"
+                        + "  [INFO] Maximum workload based on GPA 4.00: 28 MCs\n"
+                        + dash);
+
+        helpMap.put("planner edit",
+                dash + "\n"
+                        + "COMMAND: planner edit\n"
+                        + dash + "\n"
+                        + "Purpose:\n"
+                        + "  Moves a module already in your planner to a different semester.\n\n"
+                        + "Usage:\n"
+                        + "  planner edit MODULE_CODE SEMESTER\n\n"
+                        + "Valid semesters: y1s1, y1s2, y2s1, y2s2, y3s1, y3s2, y4s1, y4s2\n\n"
+                        + "Example:\n"
+                        + "  planner edit CS2113 y3s1\n\n"
+                        + "Example output:\n"
+                        + "  Edited CS2113 to be in y3s1\n"
+                        + dash);
+
+        helpMap.put("planner remove",
+                dash + "\n"
+                        + "COMMAND: planner remove\n"
+                        + dash + "\n"
+                        + "Purpose:\n"
+                        + "  Removes a module from your semester planner.\n\n"
+                        + "Usage:\n"
+                        + "  planner remove MODULE_CODE\n\n"
+                        + "Example:\n"
+                        + "  planner remove CS2113\n\n"
+                        + "Example output:\n"
+                        + "  CS2113 has been removed from planner\n"
                         + dash);
 
         helpMap.put("help",
