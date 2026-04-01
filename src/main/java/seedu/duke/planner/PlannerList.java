@@ -17,8 +17,26 @@ public class PlannerList {
     public String list () {
         StringBuilder output = new StringBuilder();
         for (int i = 0; i < 8; i++) {
-            output.append("Semester: ");
-            output.append(i+1);
+            switch(i) {
+            case 0: output.append("y1s1:");
+            break;
+            case 1: output.append("y1s2:");
+                break;
+            case 2: output.append("y2s1:");
+                break;
+            case 3: output.append("y2s2:");
+                break;
+            case 4: output.append("y3s1:");
+                break;
+            case 5: output.append("y3s2:");
+                break;
+            case 6: output.append("y4s1:");
+                break;
+            case 7: output.append("y4s2:");
+                break;
+            default:
+                break;
+            }
             output.append("\n");
             ArrayList<Module> currSem = course.get(i);
             for (Module currModule : currSem) {
