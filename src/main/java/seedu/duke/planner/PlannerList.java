@@ -166,4 +166,14 @@ public class PlannerList {
         assert containsModule(editedModule.getModuleCode()) 
                 : "Edited module should exist in the planner after modification.";
     }
+
+    public ArrayList<Module> getAllModules() {
+        ArrayList<Module> allModules = new ArrayList<>();
+
+        for (ArrayList<Module> semesterModules : course) {
+            allModules.addAll(semesterModules);
+        }
+
+        return allModules;
+    }
 }
