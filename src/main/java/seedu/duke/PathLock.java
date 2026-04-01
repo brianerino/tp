@@ -1,22 +1,24 @@
 package seedu.duke;
 
-import java.util.List;
-import java.util.Scanner;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Scanner;
+import java.util.logging.LogManager;
 
 import seedu.duke.appstate.AppState;
 import seedu.duke.command.Command;
+import seedu.duke.exception.DuplicateException;
 import seedu.duke.module.Module;
 import seedu.duke.module.ModuleList;
 import seedu.duke.parser.Parser;
+import seedu.duke.planner.PlannerList;
 import seedu.duke.profile.UserProfile;
 import seedu.duke.storage.ProfileStorage;
-import seedu.duke.planner.PlannerList;
-import seedu.duke.ui.UI;
 import seedu.duke.storage.Storage;
-
-import seedu.duke.exception.DuplicateException;
-import java.util.NoSuchElementException;
+import seedu.duke.ui.UI;
 
 public class PathLock {
     /**
@@ -24,6 +26,8 @@ public class PathLock {
      */
     @SuppressWarnings("checkstyle:RightCurly")
     public static void main(String[] args) {
+        setupLogging();
+
         Scanner scanner = new Scanner(System.in);
         PlannerList course = new PlannerList();
 
@@ -62,6 +66,17 @@ public class PathLock {
             }
         }
         scanner.close();
+    }
+
+    private static void setupLogging() {
+        new File("data").mkdirs();
+        try (InputStream config = PathLock.class.getResourceAsStream("/logging.properties")) {
+            if (config != null) {
+                LogManager.getLogManager().readConfiguration(config);
+            }
+        } catch (IOException e) {
+            // fall back to default logging if config cannot be loaded
+        }
     }
 
     private static ModuleList getModuleList(String username) {
