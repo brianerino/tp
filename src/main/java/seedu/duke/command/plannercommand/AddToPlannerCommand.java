@@ -2,6 +2,7 @@ package seedu.duke.command.plannercommand;
 
 import seedu.duke.appstate.AppState;
 import seedu.duke.command.Command;
+import seedu.duke.exception.DuplicateException;
 import seedu.duke.module.ModuleList;
 import seedu.duke.module.Module;
 import seedu.duke.planner.PlannerList;
@@ -31,8 +32,11 @@ public class AddToPlannerCommand extends Command {
         }
         try {
             module.setSemester(semester);
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             return e.getMessage();
+        }
+        if (module.isPlanned()) {
+            throw new IllegalArgumentException(moduleCode + " is already in planner");
         }
         planner.addModule(module);
         try {

@@ -10,6 +10,7 @@ public class Module {
     private final List<String> prerequisites;
     private final List<String> preclusions;
     private ModuleStatus status;
+    private boolean isPlanned;
     private String semester;
 
     public Module(String code, int mc, String type, String orGroup,
@@ -21,11 +22,13 @@ public class Module {
         this.prerequisites = prerequisites;
         this.preclusions = preclusions;
         this.status = ModuleStatus.INCOMPLETE;
+        this.isPlanned = false;
         this.semester = "";
     }
 
     public Module(String code, int mc) {
         this(code, mc, null, null, List.of(), List.of());
+        this.isPlanned = false;
     }
 
     public String getModuleCode() {
@@ -83,6 +86,14 @@ public class Module {
 
     public void markIncompleted() {
         this.status = ModuleStatus.INCOMPLETE;
+    }
+
+    public void setIsPlanned(boolean bool) {
+        this.isPlanned = bool;
+    }
+
+    public boolean isPlanned() {
+        return this.isPlanned;
     }
 
     @Override

@@ -3,6 +3,7 @@ package seedu.duke.planner;
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
 
+import seedu.duke.exception.DuplicateException;
 import seedu.duke.module.Module;
 public class PlannerList {
     private final ArrayList<ArrayList<Module>> course;
@@ -53,10 +54,11 @@ public class PlannerList {
     }
 
     public void addModule(Module module) {
-        String semester = module.getSemester();
-        course.get(getSemesterIndex(semester)).add(module);
-        // Assertion to check if module was successfully added
-        assert containsModule(module.getModuleCode()) : "Module should have been added successfully.";
+            String semester = module.getSemester();
+            course.get(getSemesterIndex(semester)).add(module);
+            module.setIsPlanned(true);
+            // Assertion to check if module was successfully added
+            assert containsModule(module.getModuleCode()) : "Module should have been added successfully.";
     }
 
     public boolean containsModule(String moduleCode) {
@@ -148,6 +150,7 @@ public class PlannerList {
                 Module currModule = currSem.get(j);
                 if (currModule.getModuleCode().equals(moduleCode)) {
                     currSem.remove(j);
+                    currModule.setIsPlanned(false);
                     isModulePresent = true;
                     break;
                 }
