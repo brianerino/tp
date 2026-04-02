@@ -3,7 +3,8 @@
 ---
 ## Acknowledgements
 
-{list here sources of all reused/adapted ideas, code, documentation, and third-party libraries -- include links to the original source as well}
+- [Gson](https://github.com/google/gson) (v2.11.0) — Used for parsing the `modules.json` data file containing CEG module information.
+- This project follows the structure and conventions taught in [CS2113 Software Engineering](https://nus-cs2113-ay2526s2.github.io/website/), including the Command pattern and separation of concerns between Parser, Command, and Storage components.
 
 ---
 ## Design
@@ -848,28 +849,243 @@ database or internet connection.
 ---
 ## User Stories
 
-|Version| As a ... | I want to ...                                           | So that I can ...                                           |
-|--------|----------|---------------------------------------------------------|-------------------------------------------------------------|
-|v1.0|New User| see usage instructions                                  | refer to them when I forget how to use the application      |
-|v1.0|User| see my output                                           | know what I entered                                         |
-|v2.0|User| have a planner mode                                     | plan which mods I want to take when                         |
-|v2.0|User| add mods to the planner                                 | -                                                           |
-|v2.0|User| be able to edit the mods I have indicated in my planenr | correct any mistakes I made                                 |
-|v2.0|User| have a visual indication of my planner                  | so that I can see my whole planned timetable over my course |
+| Version | As a ...               | I want to ...                                            | So that I can ...                                                    |
+|---------|------------------------|----------------------------------------------------------|----------------------------------------------------------------------|
+| v1.0    | new user               | see usage instructions                                   | refer to them when I forget how to use the application               |
+| v1.0    | CEG student            | mark a module as completed                               | track my academic progress                                           |
+| v1.0    | CEG student            | remove a completed module                                | correct mistakes in my records                                       |
+| v1.0    | CEG student            | list all completed modules                               | see what I have already cleared                                      |
+| v1.0    | CEG student            | list all incomplete modules                              | know what I still need to take                                       |
+| v1.0    | CEG student            | list all modules required for graduation                 | see the full graduation checklist                                    |
+| v1.0    | CEG student            | count my completed MCs                                   | track how far I am from the 160 MC requirement                       |
+| v1.0    | CEG student            | check prerequisites for a module                         | know what I need to clear before taking it                           |
+| v1.0    | CEG student            | check what modules a completed module unlocks            | plan what to take next                                               |
+| v1.0    | CEG student            | have my completed modules saved automatically            | retain my progress between sessions                                  |
+| v2.0    | CEG student            | add modules to a semester planner                        | plan which modules I want to take each semester                      |
+| v2.0    | CEG student            | view my planner across all 8 semesters                   | see my whole planned timetable over the course                       |
+| v2.0    | CEG student            | move a module to a different semester in the planner      | correct or adjust my plan                                            |
+| v2.0    | CEG student            | remove a module from the planner                         | update my plan when things change                                    |
+| v2.0    | CEG student            | see workload warnings when adding to the planner         | avoid overloading or underloading a semester                         |
+| v2.0    | CEG student            | add external modules with custom MCs                     | track exchange or cross-faculty modules                              |
+| v2.0    | CEG student            | create a profile with my GPA                             | get personalised workload recommendations                           |
+| v2.0    | CEG student            | switch between user profiles                             | share the app with friends or manage multiple plans                  |
+| v2.0    | CEG student            | get detailed help on specific commands                   | learn how to use each feature without external docs                  |
+| v2.0    | CEG student            | have my planner saved and loaded automatically           | retain my semester plan between sessions                             |
 
 ---
 ## Non-Functional Requirements
 
 1. Should work on any mainstream OS (Windows, macOS, Linux) with Java 17 or above installed.
 2. All data is stored locally and the application should work fully without internet connectivity.
-3. The saved plan file should remain human-readable and editable with a standard text editor.
+3. The saved data files (modules, planner, profile) should remain human-readable and editable with a standard text editor.
+4. Should respond to any command within 1 second on a typical machine.
+5. A user with average typing speed should be able to complete module tracking tasks faster than using a GUI app.
+6. The application should handle invalid inputs gracefully without crashing.
+7. The codebase should follow object-oriented design principles taught in CS2113.
 
 ---
 ## Glossary
 
-* *glossary item* - Definition
+* **Module** — A university course unit identified by a code (e.g. CS2113). Each module carries a fixed number of Modular Credits.
+* **MC (Modular Credits)** — A measure of the workload of a module. CEG students must complete 160 MCs to graduate.
+* **CEG** — Computer Engineering, an undergraduate programme offered jointly by the School of Computing and the Faculty of Engineering at NUS.
+* **Prerequisite** — A module that must be completed before a student is allowed to take another module (e.g. CS2040C is a prerequisite for CS2113).
+* **Postrequisite** — A module that is unlocked after completing a given module (the reverse of a prerequisite).
+* **Preclusion** — A module that cannot be taken if another equivalent module has already been completed (e.g. CS1010 and CS1010E are preclusions of each other).
+* **OR Group** — A set of modules where completing any one satisfies a graduation requirement (e.g. the capstone group: CG4001 or CG4002).
+* **Planner** — The 8-semester planning view (Y1S1 to Y4S2) where students can assign modules to future semesters.
+* **Workload** — The total MCs assigned to a single semester in the planner. PathLock warns if a semester's workload exceeds the GPA-based recommended maximum or falls below the 18 MC minimum.
+* **External Module** — A module not in PathLock's built-in CEG module list (e.g. exchange or cross-faculty modules), added manually with a user-specified MC value.
+* **User Profile** — A saved record containing the user's name and GPA, used to personalise workload recommendations.
 ---
 
 ## Instructions for manual testing
 
-{Give instructions on how to do a manual product testing e.g., how to load sample data to be used for testing}
+Given below are instructions to test the app manually. These instructions provide a starting point;
+testers are expected to do more exploratory testing.
+
+### Launch and first-time setup
+
+1. Ensure Java 17 or above is installed.
+2. Download `pathlock.jar` from the latest release.
+3. Open a terminal, navigate to the folder containing the JAR, and run: `java -jar pathlock.jar`
+4. Expected: ASCII logo is displayed, followed by `Enter your name:` prompt.
+5. Enter a name (e.g. `TestUser`) and press Enter.
+6. Expected: Prompted for GPA with `Enter your GPA (2.0 to 5.0):`.
+7. Enter a valid GPA (e.g. `3.5`) and press Enter.
+8. Expected: Profile saved confirmation and recommended max workload displayed. `Pathlock awaits:` prompt appears.
+
+**Edge cases to try:**
+- Empty name → should re-prompt.
+- GPA outside range (e.g. `1.0`, `6.0`) → should re-prompt.
+- Non-numeric GPA (e.g. `abc`) → should re-prompt.
+
+### Returning user login
+
+Prerequisites: A profile for `TestUser` was created in a previous session.
+
+1. Launch the app and enter `TestUser` at the name prompt.
+2. Expected: `Welcome back, TestUser!` with saved GPA and workload displayed. No GPA prompt.
+
+### Marking a module as done
+
+1. Test case: `done CS1010`
+   - Expected: `CS1010 has been added.`
+
+2. Test case: `done CS1010` (duplicate)
+   - Expected: Error message indicating module already completed.
+
+3. Test case: `done INVALID`
+   - Expected: Error about invalid module code format.
+
+4. Test case: `done` (missing module code)
+   - Expected: Error prompting user to input module code.
+
+### Adding an external module
+
+1. Test case: `done EX1234 /mc 4`
+   - Expected: `EX1234 has been added.`
+
+2. Test case: `done EX5678` (external module without `/mc`)
+   - Expected: Message prompting user to provide MCs using `/mc`.
+
+3. Test case: `done EX9999 /mc 0`
+   - Expected: Error that MC must be a positive integer.
+
+4. Test case: `done EX9999 /mc 13`
+   - Expected: Error that MC cannot be greater than 12.
+
+### Removing a module
+
+Prerequisites: `CS1010` has been marked as done.
+
+1. Test case: `remove CS1010`
+   - Expected: `CS1010 has been removed`
+
+2. Test case: `remove CS9999`
+   - Expected: Message indicating module is not in the list.
+
+3. Test case: `remove` (missing module code)
+   - Expected: Error prompting user to input module code.
+
+### Listing modules
+
+1. Test case: `list completed`
+   - Expected: Shows all completed modules, or `No modules completed yet.` if none.
+
+2. Test case: `list incomplete`
+   - Expected: Shows incomplete modules with OR groups displayed as `CS2103 OR CS2113`.
+
+3. Test case: `list needed`
+   - Expected: Shows all modules required for graduation.
+
+### Counting MCs
+
+Prerequisites: At least one module marked as done.
+
+1. Test case: `count`
+   - Expected: Shows `Completed: X / 160 MCs (Y%)` and `Incomplete: Z MCs (W%)`.
+
+### Checking prerequisites
+
+1. Test case: `prereq CS2113`
+   - Expected: `Prerequisites for CS2113: CS2040C`
+
+2. Test case: `prereq CS1010`
+   - Expected: `CS1010 has no prerequisites.`
+
+3. Test case: `prereq` (missing module code)
+   - Expected: Error prompting user to input module code.
+
+### Checking postrequisites
+
+1. Test case: `postreq CS1010`
+   - Expected: Lists modules that CS1010 unlocks (e.g. CS2040C).
+
+2. Test case: `postreq CG4002`
+   - Expected: Message indicating module does not unlock any other modules.
+
+### Adding modules to planner
+
+Prerequisites: No modules in the planner yet.
+
+1. Test case: `planner add CS1010 y1s1`
+   - Expected: Confirmation message with workload information for Y1S1.
+
+2. Test case: `planner add CS1010 y1s2` (duplicate module)
+   - Expected: Error indicating module is already in the planner.
+
+3. Test case: `planner add CS1010 y5s1` (invalid semester)
+   - Expected: Error about incorrect semester format.
+
+4. Test case: `planner add FAKE1234 y1s1` (module not in module list)
+   - Expected: Error indicating module not found.
+
+### Viewing the planner
+
+1. Test case: `planner list`
+   - Expected: Shows all 8 semesters (Y1S1 to Y4S2) with modules listed under each.
+
+### Editing modules in planner
+
+Prerequisites: `CS1010` is in the planner under Y1S1.
+
+1. Test case: `planner edit CS1010 y2s1`
+   - Expected: `Edited CS1010 to be in y2s1`
+
+2. Test case: `planner edit CS9999 y2s1` (module not in planner)
+   - Expected: Error message.
+
+### Removing modules from planner
+
+Prerequisites: `CS1010` is in the planner.
+
+1. Test case: `planner remove CS1010`
+   - Expected: `CS1010 has been removed from planner`
+
+2. Test case: `planner remove CS9999` (not in planner)
+   - Expected: Error message.
+
+### Switching users
+
+Prerequisites: A profile for `AnotherUser` exists (created in a previous session).
+
+1. Test case: `switch AnotherUser`
+   - Expected: `Switched to user: AnotherUser` with that user's modules and planner loaded.
+
+2. Test case: `switch NonExistentUser`
+   - Expected: `User "NonExistentUser" does not exist.`
+
+### Using the help command
+
+1. Test case: `help`
+   - Expected: Grouped overview of all available commands.
+
+2. Test case: `help done`
+   - Expected: Detailed help for the `done` command with format and examples.
+
+3. Test case: `help invalidtopic`
+   - Expected: `No detailed help found for "invalidtopic".`
+
+### Data persistence
+
+1. Add some modules (`done CS1010`, `done CS2040C`), add to planner (`planner add CS1010 y1s1`), then type `exit`.
+2. Relaunch the app and log in with the same username.
+3. Run `list completed` and `planner list`.
+   - Expected: All previously saved modules and planner state are restored.
+
+### Dealing with missing or corrupted data files
+
+1. Navigate to `data/users/<username>/` and delete `modules.txt`.
+   - Expected: App starts with an empty module list. No crash.
+
+2. Open `modules.txt` and add a malformed line (e.g. `BADDATA`).
+   - Expected: App skips the malformed line and loads remaining valid entries.
+
+3. Delete the entire `data/` directory.
+   - Expected: App treats user as a new user and prompts for GPA.
+
+### Exiting the program
+
+1. Test case: `exit`
+   - Expected: Closing message displayed, application terminates.
