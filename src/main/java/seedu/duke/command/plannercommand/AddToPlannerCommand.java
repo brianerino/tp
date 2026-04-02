@@ -2,7 +2,6 @@ package seedu.duke.command.plannercommand;
 
 import seedu.duke.appstate.AppState;
 import seedu.duke.command.Command;
-import seedu.duke.exception.DuplicateException;
 import seedu.duke.module.ModuleList;
 import seedu.duke.module.Module;
 import seedu.duke.planner.PlannerList;

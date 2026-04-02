@@ -3,7 +3,6 @@ package seedu.duke.planner;
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
 
-import seedu.duke.exception.DuplicateException;
 import seedu.duke.module.Module;
 public class PlannerList {
     private final ArrayList<ArrayList<Module>> course;
