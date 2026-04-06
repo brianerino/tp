@@ -16,6 +16,10 @@ public class PlannerList {
         assert course.size() == 8 : "Planner should have exactly 8 semesters.";
     }
 
+    /**
+     * Returns the planner list with semesters listed in each semester
+     * @return String of planner list
+     */
     public String list() {
         StringBuilder output = new StringBuilder();
 
@@ -67,6 +71,13 @@ public class PlannerList {
         }
     }
 
+    /**
+     * Adds the specified module to the semester list indicated by the module's semester.
+     * Also marks the module as planned after it has been added.
+     *
+     * @param module The module to be added to the planner.
+     * @throws IllegalArgumentException If the module's semester is invalid.
+     */
     public void addModule(Module module) {
         String semester = module.getSemester();
         course.get(getSemesterIndex(semester)).add(module);
@@ -156,6 +167,14 @@ public class PlannerList {
         }
     }
 
+    /**
+     * Removes a module from the planner based on its module code.
+     * The module is deleted from the semester in which it is stored
+     * and its planned status is updated accordingly.
+     *
+     * @param moduleCode The code of the module to remove.
+     * @throws NoSuchElementException If the module cannot be found in the planner.
+     */
     public void removeModule(String moduleCode) {
         boolean isModulePresent = false;
         for (int i = 0; i < 8; i++) {
@@ -175,12 +194,24 @@ public class PlannerList {
         }
     }
 
+    /**
+     * Replaces an existing module in the planner with an edited version.
+     * The edited module is assigned the given semester, the original module
+     * is removed using its module code, and the updated module is then added
+     * back into the planner.
+     *
+     * @param editedModule The modified module to store.
+     * @param semester The semester assigned to the modified module.
+     * @param moduleCode The module code of the module being replaced.
+     * @throws NoSuchElementException If the original module is not found in the planner.
+     * @throws IllegalArgumentException If the given semester is not recognised.
+     */
     public void editModule(Module editedModule, String semester, String moduleCode) {
         editedModule.setSemester(semester);
         removeModule(moduleCode);
         addModule(editedModule);
         // Assertion to verify the edited module is correctly placed
-        assert containsModule(editedModule.getModuleCode()) 
+        assert containsModule(editedModule.getModuleCode())
                 : "Edited module should exist in the planner after modification.";
     }
 
