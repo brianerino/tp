@@ -6,17 +6,43 @@ import seedu.duke.planner.PlannerList;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class PlannerStorage {
     private static final Logger logger = Logger.getLogger(PlannerStorage.class.getName());
-    private final String filePath;
+
+    private final String username;
+    private String plannerName;
+    private String filePath;
 
     public PlannerStorage(String username) {
+        this(username, "plan1");
+    }
+
+    public PlannerStorage(String username, String plannerName) {
         assert username != null && !username.trim().isEmpty() : "Username cannot be empty";
-        this.filePath = "data/users/" + username.trim() + "/planner.txt";
+        assert plannerName != null && !plannerName.trim().isEmpty() : "Planner name cannot be empty";
+
+        this.username = username.trim();
+        this.plannerName = plannerName.trim();
+        this.filePath = buildFilePath(this.username, this.plannerName);
+    }
+
+    private String buildFilePath(String username, String plannerName) {
+        return "data/users/" + username + "/plans/" + plannerName + ".txt";
+    }
+
+    public void setPlannerName(String plannerName) {
+        assert plannerName != null && !plannerName.trim().isEmpty() : "Planner name cannot be empty";
+        this.plannerName = plannerName.trim();
+        this.filePath = buildFilePath(username, this.plannerName);
+    }
+
+    public String getPlannerName() {
+        return plannerName;
     }
 
     public PlannerList load() throws IOException {
@@ -89,5 +115,28 @@ public class PlannerStorage {
 
         writer.close();
         logger.info("Saved planner to file: " + filePath);
+    }
+
+    public ArrayList<String> listPlannerNames() {
+        ArrayList<String> plannerNames = new ArrayList<>();
+        File folder = new File("data/users/" + username + "/plans");
+
+        if (!folder.exists()) {
+            return plannerNames;
+        }
+
+        File[] files = folder.listFiles();
+        if (files == null) {
+            return plannerNames;
+        }
+
+        for (File file : files) {
+            if (file.isFile() && file.getName().endsWith(".txt")) {
+                String fileName = file.getName();
+                plannerNames.add(fileName.substring(0, fileName.length() - 4));
+            }
+        }
+
+        return plannerNames;
     }
 }

@@ -10,12 +10,19 @@ public class AppState {
     private PlannerList planner;
     private UserProfile profile;
     private PlannerStorage plannerStorage;
+    private String activePlannerName;
 
-    public AppState(ModuleList module, PlannerList planner, UserProfile profile,String username) {
+    public AppState(ModuleList module, PlannerList planner, UserProfile profile, String username) {
+        this(module, planner, profile, username, "plan1");
+    }
+
+    public AppState(ModuleList module, PlannerList planner, UserProfile profile,
+                    String username, String plannerName) {
         this.module = module;
         this.planner = planner;
         this.profile = profile;
-        this.plannerStorage = new PlannerStorage(username);
+        this.activePlannerName = plannerName;
+        this.plannerStorage = new PlannerStorage(username, plannerName);
     }
 
     public void setPlanner(PlannerList planner) {
@@ -36,6 +43,15 @@ public class AppState {
 
     public PlannerStorage getPlannerStorage() {
         return plannerStorage;
+    }
+
+    public String getActivePlannerName() {
+        return activePlannerName;
+    }
+
+    public void switchPlanner(String username, String plannerName) {
+        this.activePlannerName = plannerName;
+        this.plannerStorage = new PlannerStorage(username, plannerName);
     }
 
     public void update(ModuleList module, PlannerList planner, UserProfile profile, PlannerStorage plannerStorage) {
