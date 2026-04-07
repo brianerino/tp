@@ -43,7 +43,7 @@ public class ModuleList {
         String code = moduleCode.toUpperCase();
 
         Module internal = allModules.get(code);
-        if (internal != null){
+        if (internal != null) {
             int mc = internal.getModularCredits();
             assert mc >= 0 : "MC value should be positive";
             logger.log(Level.INFO, "Retrieved MC for {0}: {1}", new Object[]{code, mc});
@@ -52,7 +52,7 @@ public class ModuleList {
 
         Module external = externalModules.get(code);
         if (external != null) {
-            int mc =  external.getModularCredits();
+            int mc = external.getModularCredits();
             logger.log(Level.INFO, "Retrieved MC for external module {0}: {1}",
                     new Object[]{code, external.getModularCredits()});
             return mc;
@@ -130,7 +130,7 @@ public class ModuleList {
         if (isRecognisedModule(code)) {
             module = allModules.get(code);
         } else {
-            module =  externalModules.get(code);
+            module = externalModules.get(code);
         }
 
         if (module != null && module.isCompleted()) {

@@ -101,8 +101,7 @@ public class Parser {
                     throw new IllegalArgumentException("Planner name required.");
                 }
                 return new PlannerSwitchCommand(parts[1]);
-            }
-            else {
+            } else {
                 throw new IllegalArgumentException("Unknown planner command.");
             }
         }
