@@ -59,6 +59,8 @@ public class HelpCommand extends Command {
         sb.append("  planner add MODULE_CODE SEMESTER      - Add a module to a semester\n");
         sb.append("  planner edit MODULE_CODE SEMESTER     - Move a module to a different semester\n");
         sb.append("  planner remove MODULE_CODE            - Remove a module from your planner\n");
+        sb.append("  planner list plans                    - Show all saved planner variations\n");
+        sb.append("  planner switch PLANNER_NAME           - Switch to a different planner variation\n");
         sb.append("  (Valid semesters: y1s1, y1s2, y2s1, y2s2, y3s1, y3s2, y4s1, y4s2)\n\n");
 
         // Pathlock Commands
@@ -115,6 +117,10 @@ public class HelpCommand extends Command {
             return "planner edit";
         case "planner remove":  
             return "planner remove";
+        case "planner list plans":
+            return "planner list plans";
+        case "planner switch":
+            return "planner switch";
         case "help":           
             return "help";
         case "switch":
@@ -309,6 +315,36 @@ public class HelpCommand extends Command {
                         + "  planner remove CS2113\n\n"
                         + "Example output:\n"
                         + "  CS2113 has been removed from planner\n"
+                        + dash);
+
+        helpMap.put("planner list plans",
+                dash + "\n"
+                        + "COMMAND: planner list plans\n"
+                        + dash + "\n"
+                        + "Purpose:\n"
+                        + "  Shows all saved planner variations for the current user.\n\n"
+                        + "Usage:\n"
+                        + "  planner list plans\n\n"
+                        + "Example:\n"
+                        + "  planner list plans\n\n"
+                        + "Example output:\n"
+                        + "  Planner variations:\n"
+                        + "  1. plan1 (active)\n"
+                        + "  2. plan2\n"
+                        + dash);
+
+        helpMap.put("planner switch",
+                dash + "\n"
+                        + "COMMAND: planner switch\n"
+                        + dash + "\n"
+                        + "Purpose:\n"
+                        + "  Switches to another saved planner variation.\n\n"
+                        + "Usage:\n"
+                        + "  planner switch PLANNER_NAME\n\n"
+                        + "Example:\n"
+                        + "  planner switch plan2\n\n"
+                        + "Example output:\n"
+                        + "  Switched to planner: plan2\n"
                         + dash);
 
         helpMap.put("help",
