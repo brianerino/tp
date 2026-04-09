@@ -16,8 +16,8 @@ import seedu.pathlock.module.ModuleList;
 import seedu.pathlock.parser.Parser;
 import seedu.pathlock.planner.PlannerList;
 import seedu.pathlock.profile.UserProfile;
+import seedu.pathlock.storage.ModStorage;
 import seedu.pathlock.storage.ProfileStorage;
-import seedu.pathlock.storage.Storage;
 import seedu.pathlock.ui.UI;
 
 public class PathLock {
@@ -79,7 +79,7 @@ public class PathLock {
     }
 
     private static ModuleList getModuleList(String username) {
-        Storage storage = new Storage(username);
+        ModStorage storage = new ModStorage(username);
         ModuleList modules = new ModuleList();
 
         try {
@@ -106,7 +106,6 @@ public class PathLock {
     }
 
     private static UserProfile getOrCreateProfile(Scanner scanner) {
-        ProfileStorage profileStorage = new ProfileStorage();
 
         System.out.print("Enter your name: ");
         if (!scanner.hasNextLine()) {
@@ -119,9 +118,10 @@ public class PathLock {
             System.out.print("Name cannot be empty. Enter your name: ");
             name = scanner.nextLine().trim();
         }
-
+        ProfileStorage profileStorage = new ProfileStorage(name);
         try {
-            UserProfile savedProfile = profileStorage.loadProfile(name); //
+
+            UserProfile savedProfile = profileStorage.load(); //
             if (savedProfile != null) {
                 System.out.println("Welcome back, " + savedProfile.getName() + "!");
                 System.out.println("Saved GPA: " + String.format("%.2f", savedProfile.getGpa()));
@@ -140,7 +140,7 @@ public class PathLock {
         UserProfile profile = new UserProfile(name, gpa);
 
         try {
-            profileStorage.saveProfile(profile);
+            profileStorage.save(profile);
         } catch (IOException e) {
             System.out.println("Warning: profile could not be saved.");
             UI.dash();

@@ -4,7 +4,7 @@ import seedu.pathlock.appstate.AppState;
 import seedu.pathlock.module.ModuleValidator;
 import seedu.pathlock.module.ModuleList;
 import seedu.pathlock.exception.DuplicateException;
-import seedu.pathlock.storage.Storage;
+import seedu.pathlock.storage.ModStorage;
 
 import java.io.IOException;
 import java.util.logging.Level;
@@ -24,7 +24,7 @@ public class DoneCommand extends Command {
     @Override
     public String execute(AppState appState) {
         String username = appState.getProfile().getName();
-        Storage storage = new Storage(username);
+        ModStorage storage = new ModStorage(username);
 
         ModuleList modules = appState.getModule();
         assert modules != null : "ModuleList should not be null";
@@ -58,7 +58,7 @@ public class DoneCommand extends Command {
         }
     }
 
-    private String handleInternalModule(ModuleList modules, Storage storage) throws DuplicateException, IOException {
+    private String handleInternalModule(ModuleList modules, ModStorage storage) throws DuplicateException, IOException {
         int expectedMc = modules.getMcForModule(moduleCode);
 
         ModuleValidator.validateInternalMc(mc, expectedMc, moduleCode);
@@ -71,7 +71,7 @@ public class DoneCommand extends Command {
         return moduleCode + " has been added.";
     }
 
-    private String handleExternalModule(ModuleList modules, Storage storage) throws DuplicateException, IOException {
+    private String handleExternalModule(ModuleList modules, ModStorage storage) throws DuplicateException, IOException {
         if (mc == null) {
             return "\"" + moduleCode + "\" is not a recognised module. "
                     + "If this is an external module, provide its MCs using /mc. "

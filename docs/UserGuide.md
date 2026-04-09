@@ -114,9 +114,9 @@ Recommended max semester workload: 32 MCs
 =======================================================================
 Mar 31, 2026 9:49:27 PM seedu.pathlock.module.ModuleLoader loadModules
 INFO: Loaded 34 modules from JSON
-Mar 31, 2026 9:49:27 PM seedu.pathlock.storage.Storage load
+Mar 31, 2026 9:49:27 PM seedu.pathlock.storage.ModStorage load
 INFO: Loading modules from file: data/users/russell_modules.txt
-Mar 31, 2026 9:49:27 PM seedu.pathlock.storage.Storage load
+Mar 31, 2026 9:49:27 PM seedu.pathlock.storage.ModStorage load
 WARNING: Module file not found. Created new file at data/users/russell_modules.txt
 ```
 Example output (existing profile):

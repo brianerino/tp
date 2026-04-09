@@ -11,24 +11,24 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class PlannerStorage {
+public class PlannerStorage extends Storage<PlannerList> {
     private static final Logger logger = Logger.getLogger(PlannerStorage.class.getName());
 
     private final String username;
     private String plannerName;
-    private String filePath;
 
     public PlannerStorage(String username) {
         this(username, "plan1");
     }
 
     public PlannerStorage(String username, String plannerName) {
+        super("data/users/" + username.trim() + "/plans/" + plannerName.trim() + ".txt");
+
         assert username != null && !username.trim().isEmpty() : "Username cannot be empty";
         assert plannerName != null && !plannerName.trim().isEmpty() : "Planner name cannot be empty";
 
         this.username = username.trim();
         this.plannerName = plannerName.trim();
-        this.filePath = buildFilePath(this.username, this.plannerName);
     }
 
     private String buildFilePath(String username, String plannerName) {
@@ -45,19 +45,11 @@ public class PlannerStorage {
         return plannerName;
     }
 
+    @Override
     public PlannerList load() throws IOException {
-        File file = new File(filePath);
+        File file = ensureFileExists();
 
         logger.info("Loading planner from file: " + filePath);
-
-        File parent = file.getParentFile();
-        assert parent != null : "Parent directory should exist for planner file path";
-        parent.mkdirs();
-
-        if (!file.exists()) {
-            file.createNewFile();
-            logger.warning("Planner file not found. Created new file at " + filePath);
-        }
 
         PlannerList planner = new PlannerList();
 
@@ -96,13 +88,11 @@ public class PlannerStorage {
         return module;
     }
 
+    @Override
     public void save(PlannerList planner) throws IOException {
         assert planner != null : "Planner should not be null";
 
-        File file = new File(filePath);
-        File parent = file.getParentFile();
-        assert parent != null : "Parent directory should exist for planner file path";
-        parent.mkdirs();
+        ensureParentDirectoryExists();
 
         FileWriter writer = new FileWriter(filePath);
 

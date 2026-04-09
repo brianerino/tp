@@ -28,40 +28,40 @@ public class ProfileStorageTest {
 
     @Test
     public void loadProfile_noExistingFile_returnsNull() throws IOException {
-        ProfileStorage storage = new ProfileStorage();
-        UserProfile result = storage.loadProfile(TEST_USERNAME);
+        ProfileStorage storage = new ProfileStorage(TEST_USERNAME);
+        UserProfile result = storage.load();
         assertNull(result);
     }
 
     @Test
     public void loadProfile_savedProfile_returnsCorrectName() throws IOException {
-        ProfileStorage storage = new ProfileStorage();
+        ProfileStorage storage = new ProfileStorage("Alice");
         UserProfile saved = new UserProfile("Alice", 4.0);
-        storage.saveProfile(saved);
+        storage.save(saved);
 
-        UserProfile loaded = storage.loadProfile("Alice");
+        UserProfile loaded = storage.load();
         assertNotNull(loaded);
         assertEquals("Alice", loaded.getName());
     }
 
     @Test
     public void loadProfile_savedProfile_returnsCorrectGpa() throws IOException {
-        ProfileStorage storage = new ProfileStorage();
+        ProfileStorage storage = new ProfileStorage("Alice");
         UserProfile saved = new UserProfile("Alice", 4.0);
-        storage.saveProfile(saved);
+        storage.save(saved);
 
-        UserProfile loaded = storage.loadProfile("Alice");
+        UserProfile loaded = storage.load();
         assertNotNull(loaded);
         assertEquals(4.0, loaded.getGpa());
     }
 
     @Test
     public void loadProfile_savedProfileWithDecimalGpa_returnsCorrectGpa() throws IOException {
-        ProfileStorage storage = new ProfileStorage();
+        ProfileStorage storage = new ProfileStorage("Bob");
         UserProfile saved = new UserProfile("Bob", 3.75);
-        storage.saveProfile(saved);
+        storage.save(saved);
 
-        UserProfile loaded = storage.loadProfile("Bob");
+        UserProfile loaded = storage.load();
         assertNotNull(loaded);
         assertEquals(3.75, loaded.getGpa());
     }
@@ -70,9 +70,9 @@ public class ProfileStorageTest {
 
     @Test
     public void saveProfile_validProfile_fileIsCreated() throws IOException {
-        ProfileStorage storage = new ProfileStorage();
+        ProfileStorage storage = new ProfileStorage("Alice");
         UserProfile profile = new UserProfile("Alice", 4.0);
-        storage.saveProfile(profile);
+        storage.save(profile);
 
         File file = new File("data/users/Alice/profile.txt");
         assertTrue(file.exists());
@@ -80,25 +80,25 @@ public class ProfileStorageTest {
 
     @Test
     public void saveProfile_overwriteExistingProfile_updatesGpa() throws IOException {
-        ProfileStorage storage = new ProfileStorage();
+        ProfileStorage storage = new ProfileStorage("Alice");
         UserProfile original = new UserProfile("Alice", 3.0);
-        storage.saveProfile(original);
+        storage.save(original);
 
         UserProfile updated = new UserProfile("Alice", 4.5);
-        storage.saveProfile(updated);
+        storage.save(updated);
 
-        UserProfile loaded = storage.loadProfile("Alice");
+        UserProfile loaded = storage.load();
         assertNotNull(loaded);
         assertEquals(4.5, loaded.getGpa());
     }
 
     @Test
     public void saveAndLoad_roundTrip_preservesAllFields() throws IOException {
-        ProfileStorage storage = new ProfileStorage();
+        ProfileStorage storage = new ProfileStorage("Eve");
         UserProfile original = new UserProfile("Eve", 3.5);
-        storage.saveProfile(original);
+        storage.save(original);
 
-        UserProfile loaded = storage.loadProfile("Eve");
+        UserProfile loaded = storage.load();
         assertNotNull(loaded);
         assertEquals(original.getName(), loaded.getName());
         assertEquals(original.getGpa(), loaded.getGpa());

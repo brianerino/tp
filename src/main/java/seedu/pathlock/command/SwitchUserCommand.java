@@ -4,8 +4,8 @@ import seedu.pathlock.appstate.AppState;
 import seedu.pathlock.module.ModuleList;
 import seedu.pathlock.module.Module;
 import seedu.pathlock.profile.UserProfile;
+import seedu.pathlock.storage.ModStorage;
 import seedu.pathlock.storage.ProfileStorage;
-import seedu.pathlock.storage.Storage;
 import seedu.pathlock.storage.PlannerStorage;
 import seedu.pathlock.planner.PlannerList;
 import java.util.logging.Logger;
@@ -27,14 +27,14 @@ public class SwitchUserCommand extends Command {
     public String execute(AppState appState) {
 
         try {
-            ProfileStorage profileStorage = new ProfileStorage();
-            UserProfile profile = profileStorage.loadProfile(username);
+            ProfileStorage profileStorage = new ProfileStorage(username);
+            UserProfile profile = profileStorage.load();
 
             if (profile == null) {
                 return "User \"" + username + "\" does not exist.";
             }
 
-            Storage storage = new Storage(username);
+            ModStorage storage = new ModStorage(username);
             ModuleList moduleList = new ModuleList();
 
             List<Module> savedModules = storage.load();

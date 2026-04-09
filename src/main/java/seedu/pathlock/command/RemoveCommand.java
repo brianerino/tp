@@ -2,7 +2,7 @@ package seedu.pathlock.command;
 
 import seedu.pathlock.appstate.AppState;
 import seedu.pathlock.module.ModuleList;
-import seedu.pathlock.storage.Storage;
+import seedu.pathlock.storage.ModStorage;
 
 import java.io.IOException;
 import java.util.logging.Level;
@@ -22,7 +22,7 @@ public class RemoveCommand extends Command {
 
         ModuleList modules = appState.getModule();
         String username = appState.getProfile().getName();
-        Storage storage = new Storage(username);
+        ModStorage storage = new ModStorage(username);
 
         assert modules != null : "ModuleList should not be null";
         assert moduleCode != null && !moduleCode.isEmpty() : "ModuleCode should not be null";
@@ -35,7 +35,7 @@ public class RemoveCommand extends Command {
         return buildResultMessage(removed);
     }
 
-    private void saveModules(ModuleList modules, Storage storage) {
+    private void saveModules(ModuleList modules, ModStorage storage) {
         try {
             storage.save(modules.getCompletedModules());
             logger.log(Level.FINE, "Storage updated after removing module: {0}", moduleCode);

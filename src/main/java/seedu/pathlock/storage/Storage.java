@@ -1,90 +1,45 @@
 package seedu.pathlock.storage;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+public abstract class Storage<T> {
+    protected String filePath;
 
-import seedu.pathlock.module.Module;
-
-public class Storage {
-    private static final Logger logger = Logger.getLogger(Storage.class.getName());
-    private String filePath;
-
-    public Storage(String username) {
-        assert username != null && !username.trim().isEmpty() : "Username cannot be empty";
-        this.filePath = "data/users/" + username.trim() + "/modules.txt";
+    protected Storage(String filePath) {
+        assert filePath != null && !filePath.trim().isEmpty() : "File path cannot be empty";
+        this.filePath = filePath;
     }
 
-    public List<Module> load() throws IOException {
+    protected File ensureFileExists() throws IOException {
         File file = new File(filePath);
-
-        logger.info("Loading modules from file: " + filePath);
-
         File parent = file.getParentFile();
+
         assert parent != null : "Parent directory should exist for file path";
         parent.mkdirs();
 
         if (!file.exists()) {
             file.createNewFile();
-            logger.warning("Module file not found. Created new file at " + filePath);
         }
 
-        List<Module> modules = new ArrayList<>();
-
-        Scanner scanner = new Scanner(file);
-        while (scanner.hasNextLine()) {
-            String line = scanner.nextLine().trim();
-            if (line.isEmpty()) {
-                continue;
-            }
-
-            logger.log(Level.FINE, "Reading line: {0}", line);
-            Module module = getModule(line);
-            modules.add(module);
-        }
-        scanner.close();
-        return modules;
+        return file;
     }
 
-    private Module getModule(String line) {
-        assert !line.isBlank() : "Line in storage file should not be blank";
-
-        String[] parts = line.split("\\|");
-        assert parts.length == 2 : "Each line must have exactly 2 fields: " + line;
-
-        String code = parts[0].trim();
-        assert !code.isEmpty() : "Module code should not be empty";
-
-        int mc = Integer.parseInt(parts[1].trim());
-        assert mc > 0 : "Modular credits should be positive";
-
-        Module module = new Module(code, mc);
-        module.markCompleted();
-        return module;
-    }
-
-    public void save(List<Module> modules) throws IOException {
-        assert modules != null : "Modules list should not be null";
-
+    protected File ensureParentDirectoryExists() {
         File file = new File(filePath);
         File parent = file.getParentFile();
+
         assert parent != null : "Parent directory should exist for file path";
         parent.mkdirs();
 
-        FileWriter writer = new FileWriter(filePath);
-
-        for (Module module : modules) {
-            writer.write(module.getModuleCode() + "|" + module.getModularCredits());
-            writer.write(System.lineSeparator());
-        }
-
-        writer.close();
-        logger.info("Saved modules to file: " + filePath);
+        return file;
     }
+
+    public String getFilePath() {
+        return filePath;
+    }
+
+    public abstract T load() throws IOException;
+
+    public abstract void save(T data) throws IOException;
 }
