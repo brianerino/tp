@@ -1,7 +1,75 @@
-# Pathlock Developer Guide
+# PathLock Developer Guide
 
 ---
-## Acknowledgements
+## Table of Contents
+1. [Acknowledgements](#1-acknowledgements)
+
+2. [Design](#2-design)
+    - [Command Component](#command-component)
+
+3. [Implementation: Russell](#3-implementation-russell)
+    - [Class Structure](#class-structure)
+    - [`Storage` Implementation](#storage-implementation)
+    - [`ProfileStorage` Implementation](#profilestorage-implementation)
+
+4. [Implementation: Shi Yong](#4-implementation-shi-yong)
+    - [Class Structure](#class-structure-1)
+    - [`done` Command Implementation](#done-command-implementation)
+    - [`remove` Command Implementation](#remove-command-implementation)
+    - [Duplicate Module Check Implementation](#duplicate-module-check-implementation)
+
+5. [Implementation: Brian](#5-implementation-brian)
+    - [Class Structure: `list` and `help` Commands](#class-structure-list-and-help-commands)
+    - [`list` Commands Implementation](#list-commands-implementation)
+    - [`help` Command Implementation](#help-command-implementation)
+    - [Class Structure: `UserProfile` and `ProfileStorage`](#class-structure-userprofile-and-profilestorage)
+    - [`UserProfile` Implementation](#userprofile-implementation)
+
+6. [Implementation: Ryan](#6-implementation-ryan)
+    - [Class Structure](#class-structure-2)
+    - [`prereq` Command Implementation](#prereq-command-implementation)
+    - [`postreq` Command Implementation](#postreq-command-implementation)
+    - [`count` Command Implementation](#count-command-implementation)
+
+7. [Implementation: Kailer](#7-implementation-kailer)
+    - [Class Structure](#class-structure-3)
+    - [`planner list` Command Implementation](#planner-list-command-implementation)
+    - [`planner add` Command Implementation](#planner-add-command-implementation)
+    - [`planner remove` Command Implementation](#planner-remove-command-implementation)
+    - [`planner edit` Command Implementation](#planner-edit-command-implementation)
+
+8. [Product Scope](#8-product-scope)
+    - [Target User Profile](#target-user-profile)
+    - [Value Proposition](#value-proposition)
+
+9. [User Stories](#9-user-stories)
+
+10. [Non-Functional Requirements](#10-non-functional-requirements)
+
+11. [Glossary](#11-glossary)
+
+12. [Instructions for Manual Testing](#12-instructions-for-manual-testing)
+    - [Launch and First-Time Setup](#launch-and-first-time-setup)
+    - [Returning User Login](#returning-user-login)
+    - [Marking a Module as Done](#marking-a-module-as-done)
+    - [Adding an External Module](#adding-an-external-module)
+    - [Removing a Module](#removing-a-module)
+    - [Listing Modules](#listing-modules)
+    - [Counting MCs](#counting-mcs)
+    - [Checking Prerequisites](#checking-prerequisites)
+    - [Checking Postrequisites](#checking-postrequisites)
+    - [Adding Modules to Planner](#adding-modules-to-planner)
+    - [Viewing the Planner](#viewing-the-planner)
+    - [Editing Modules in Planner](#editing-modules-in-planner)
+    - [Removing Modules from Planner](#removing-modules-from-planner)
+    - [Switching Users](#switching-users)
+    - [Using the Help Command](#using-the-help-command)
+    - [Data Persistence](#data-persistence)
+    - [Dealing with Missing or Corrupted Data Files](#dealing-with-missing-or-corrupted-data-files)
+    - [Exiting the Program](#exiting-the-program)
+
+---
+## 1. Acknowledgements
 
 - [Gson](https://github.com/google/gson) (v2.11.0) — Used for parsing the `modules.json` data file containing CEG module information.
 - [JUnit 5 (JUnit Jupiter)](https://junit.org/junit5/) — Used as the testing framework across all
@@ -10,11 +78,11 @@
 - This project follows the structure and conventions taught in [CS2113 Software Engineering](https://nus-cs2113-ay2526s2.github.io/website/), including the Command pattern and separation of concerns between Parser, Command, and Storage components.
 
 ---
-## Design
+## 2. Design
 
 {Describe the design and implementation of the product. Use UML diagrams and short code snippets where applicable.}
 
-### Command component
+### Command Component
 API: Command.java
 
 {insert UML diagram here}
@@ -29,7 +97,8 @@ How the `Command` Component work:
    - `ListCompletedCommand`, `ListIncompleteCommand`, and `ListNeededCommand` retrieve different filtered views of the module list. 
 4. After execution, the command returns a String result, which is then shown to the user as the system response. This is evident from the shared method signature in Command and the implementations in each subclass.
 
-## Implementation: Russell
+---
+## 3. Implementation: Russell
 
 ### Class Structure
 
@@ -39,7 +108,7 @@ The diagrams below show the key classes involved in `Storage` and `ProfileStorag
 
 ![Class diagram of ProfileStorage](https://img.plantuml.biz/plantuml/png/VL9DQyCm3BqR_1zqpEXMTjvXzDGn6ACGoiwgexccZXrifuUM_lSf7zwIBSmNIthlwLd2cvWmfBQsKXnDHQ1CK9QaY2VZ6WnOWx8O8wOKpA5DzAgyAys5u56A7e5Ty9_6KfbyG4rmbGBuFC2LEoUZRc2zrXJW2Txw8EEQqYZTOJeMRQJWi2RcbUpbzDrtD2XMt0YhKR9CttDn96HDn3DbJJFSSsAdEtjJIN6J8iyqmVD0gscnc5dVWswGiygt1swO-JpWEzEAluCmyj9W3moQcVcsV_vF_15CwjOsL4g5pdMf5Byslru_ppUmW6__0xBH0ZnntP2h-Bzy0G00)
 
-### Storage Implementation
+### `Storage` Implementation
 
 #### Overview
 
@@ -54,7 +123,7 @@ Example:
 CS2113|4
 MA1521|4
 
-### Design
+#### Design
 
 The storage flow follows this pipeline:
 ```
@@ -67,7 +136,7 @@ Key design decisions:
 - Parsing is delegated to getModule() for cleaner code
 - Assertions enforce valid inputs and file format
 
-### Implementation
+#### Implementation
 
 **initialization**
 ```java
@@ -111,7 +180,7 @@ public void save(List<Module> modules) throws IOException
 moduleCode|mc 
 ```
 
-### Sequence Diagram
+#### Sequence Diagram
 
 Save flow
 
@@ -127,7 +196,8 @@ Why This Design?
 - Cleaner and more maintainable code
 - Supports multiple users naturally
 
-### ProfileStorage Implementation
+---
+### `ProfileStorage` Implementation
 
 The ProfileStorage class manages user profile data.
 
@@ -140,7 +210,7 @@ Format:
 Example:
 `Kailer|4.5`
 
-### Design
+#### Design
 
 Pipeline:
 ```
@@ -154,7 +224,7 @@ Key design decisions:
 - getProfilePath() centralises file path logic
 - Returns null if profile does not exist
 
-### Implentation
+#### Implementation
 
 Profile Path
 ```
@@ -193,20 +263,21 @@ NAME|GPA
 
 Sequence Diagram:
 
-### Save Profile
+#### Save Profile
 
 ![](https://img.plantuml.biz/plantuml/png/jLEz3e8m4Dxx58rJYV4578mkk1aJOfmlS68ZbAQjklZmNg4QVjN5XRJVVJ_7SQoj0-EkPS4WTPNX1uk6QO9aAZKenpTQT-vxKvraWGcH8STEAIPy01oDT3rBdn5i6FCNlbZv7Bxa5cx8TQXvY2hTn40Ae0ZSYB4UZOIj75Bbw7PGeeXO6r-C1IZYZVWDU6GPi3sui_2oqKRYfWE5z_huQjgBeccwTmU3ojMQ3yJoaabZnMHqymbQ3JI0Q0Rt_xaD_BOQVh7BDNnxexi_r8FdSpvxpEX9ggbPzMI5L9WWRIOGxQicBIgBOqD-BszxhzUeClghdW00)
 
-### Load Profile
+#### Load Profile
 ![](https://img.plantuml.biz/plantuml/png/VPDDReGm38NtIDp1IqRggFikHjDDroEDUe08N1erE55YrFRsjSDFWK5aWHBdUyzE7Aw9JUI-SsLXQlOHtXF6iWWIjBKDXXXUGrW7Rj5_M8TtmKsBwxqtsLX7xhKXsdfgbj6cBCf2bt2-Q2fu0UTRi0JFCZ4DX0dJJM7MsJDkcZ5OzM94fiEJkcx8FMsBFCPkXZ-NyaUn7aqaXDzvMeL_uH6lAKn4uYmw8hklniPqYE2FJPmHwPTZK0eQZmd8yx1R5Y1Zwp1VBlLEUeqkuI0U7FT5bwbvux77LQLGBa55pli0FR5rOXWJIoLqnYxmBpXBE40w9g_pRXDd5AcPh1_hMRoRiQP5fDBMFK4Rp6dGB-dThFFREhoocSgbNUKh_yiV)
 
-### Why This Design?
+#### Why This Design?
 - Clear separation of concerns (modules vs profile)
 - Easy to extend (e.g. add more profile fields)
 - Avoids duplicated file path logic
 - Simple and robust handling of missing profiles
 
-## Implementation: Shi Yong
+---
+## 4. Implementation: Shi Yong
 
 ### Class Structure
 
@@ -311,9 +382,9 @@ The diagram below shows duplicate module check path:
 ![Sequence Diagram for Duplicate Module Check](https://img.plantuml.biz/plantuml/png/dPJFQkCm4CRl0ht3u5DoQ27Rdd9O2abl3XJ2Fe0gJTSYjkHAuztaxJkIwtzfMDZwOYnztymtFma_HLA1kgQMWYpL24Tyxz1fXBrLluDgjh3lsjfgHGW7RpgMx2hK9oagQn3UlATNVvP22gN91_WLCKZHSb6hRQiSGR5zKLILNfyAK166ZslHtZlS-QPHpcHT_cxCjQpFKDf8MNKeRmlwJMzIi1G9xdwEdM4BXU7gi3l-s6mUYXpT_aaJJk6a6ELi_Gp3JZoZxWXNgcsFn9Rrp3r6bc8miFTGiaqPqmTR5PzTvyOqXHGiJ7AVsjZ8BDeQ2SrgeKmZ9SbThYo5mUKUQsi2LGTKvW9wA285y9CwBAQXAlY_SJhYvxF6bgntlNvUlEoNni6kW0vt8my75TCVChmYkYb8yQNoI2sjJz2vVZwuBRJ1Eeg08VZmnJsT6DOHmNc22zAjmGUqZGgd1TmaM4BCbXdaQnOzw9j4OwSrnlZV_6RWCZ2-C6XWzGY7NLpVVvzQmDZLz2ziBW_pn6_-3Nm0)
 
 ---
-## Implementation: Brian
+## 5. Implementation: Brian
 
-### Class Structure
+### Class Structure: `list` and `help` Commands
 
 The diagram below shows the key classes involved in the `list` commands and the `help` command, and their relationships.
 
@@ -475,15 +546,13 @@ Storing all help content in `buildHelpMap()` as a `LinkedHashMap` means that add
 `normaliseTopic()` acting as a pre-processing step keeps `showDetailedHelp()` clean. If future commands have aliases or shorthand (e.g. `lc` for `list completed`), `normaliseTopic()` is the only place that needs updating.
 
 ---
-## Implementation: Brian
-
-### Class Structure
+### Class Structure: `UserProfile` and `ProfileStorage`
 
 The diagram below show the key classes involved in `UserProfile` and `ProfileStorage`.
 
 ![Class Diagram for UserProfile and ProfileStorage](https://img.plantuml.biz/plantuml/png/RLFBJiCm4Bn7oZ_iCLLfuPm3AYe28V6eg107n65hczHgR4UsKo4G_yuwhTEuRIvnTcTcPoV9p7cqlbLrdkMPbxuMCA_HERYLM5bK9RmvOHVMV4bgeUQmFo-ziLY9G5jBBe19osfwT1kf6oGciA1puxsLgzQB1sRqKlu8k0gKhfT8_-OPq3K1ZKgKi2IQhcAjQh04RjfLc11Auo6t658kXk1HH5V2FnEe6ANANUE-mL1FvQd-AfXHIcWk-1D-lnkxgGto09NQvzdVOOyqaiCg9B9lBT2lYvOi3wsUc0dwSQSpuC7AaU5mAoAZsTqJ7B6sHlBKBNbvD6mJVOv1eTG5sih5OH-VFR7VvCNEhK3VZtCCjHQMABl3EOCJ85EgyNV6XfJFK6BgdR_UsNHwVHng2PI8Ey8CFw0IMESlO5BgAJ84xIv3U8IUqIkc7-0V)
 
-### UserProfile Implementation
+### `UserProfile` Implementation
 
 #### Overview
 
@@ -498,7 +567,7 @@ Format:
 Example:
 `Alice|4.50`
 
-### Design
+#### Design
 
 The profile creation and workload recommendation flow follows this pipeline:
 ```
@@ -506,7 +575,7 @@ PathLock (Main) → getOrCreateProfile() → ProfileStorage.loadProfile() → Us
                                        ↘ (if not found) prompt user → UserProfile → ProfileStorage.saveProfile()
 ```
 
-### Implementation
+#### Implementation
 
 **Construction**
 ```java
@@ -536,17 +605,17 @@ Maps the user's GPA to a recommended MC maximum workload per semester:
 | 3.0 – 3.99    | 26 MCs                   |
 | Below 3.0     | 24 MCs                   |
 
-### Sequence Diagram
+#### Sequence Diagram
 
 ![Sequence Diagram: UserProfile and ProfileStorage](https://img.plantuml.biz/plantuml/png/jLLDIyD04Bq7yXz6JnPg4S5BaLBHuaMbM4IlOp9DboQxSRFn0_pnpiQqsQJRKaLJ2DlPdVVUphmXuyAWDcMMXe4H9YMOqKj9CYAu4fXep8RmK92UQZKNl8ioXdezCqfZGc604Q-gKs6GCvY8H8xIm1JDuaP5oqwqa-tkEKnX40RsBnoFra0mX1HB6Iq0yxpY5Qzeo24AW_LPpgloXt0uaOON7whK834ZZdYnxLuNegtM2b0Ory4Zcz1pTNIknb3jT1zWGgQEMTvVOFf0PqOBcOH1J3k0c2KraDUThLxqBWfJX07miuTsJHZ3tSNjvFDwUW5phJBuxftDtyfiD_qKFexlapikiXrkrB8kDvZUt4XLwpuaEVOwYbi-RF1Tj4sjcrBTtEqNRWnOu2l5BTx6YewT7ocDL4RmZD6o3-Vs5gC3jZIb1QtRAPM1kIfbl0-nBDEqI-WT7zlcezF12HW5PuEJNZLAgz9qnedhwiVynuOqxBbxsj-IdNDkUx6ILMFrzfwBDorOz7emk5X_FHO_cGgVXrPLgomtW7jYHsKaOueXm_SXFC7jPN6uWY5h8_iRyug_5Ly0)
 
 
-### Why This Design?
+#### Why This Design?
 - GPA validation at construction time prevents invalid state from continuing through the app
 - Centralising the GPA-to-workload mapping in `UserProfile` means the thresholds only need updating in one place
 
 ---
-## Implementation: Ryan
+## 6. Implementation: Ryan
 
 ### Class Structure
 
@@ -687,7 +756,7 @@ The diagram below shows the execution path for `count`:
 `CountCommand` has no fields and no branching — it is a single delegation to `ModuleList.countMcs()`. This keeps the command class minimal and puts all MC calculation logic in `ModuleList`, consistent with how `PrereqCommand` and `PostreqCommand` delegate to `ModuleList` for their respective lookups.
 
 ---
-## Implementation: Kailer<br>Planner Feature Classes
+## 7. Implementation: Kailer
 ### Class Structure
 
 The diagrams below show the key classes involved in the planner feature and their relationships
@@ -705,10 +774,11 @@ The diagrams below show the key classes involved in the planner feature and thei
 ![Class Diagram of planner edit](./Diagrams/EditPlannerCommand.png)
 
 ### `planner list` Command Implementation
+
 #### Overview
 The `planner list` command displays all the mods the user has added into the planner in order of semesters.
 
-### Design
+#### Design
 
 The command follows the standard execution pipeline:
 ```
@@ -742,6 +812,7 @@ It then loops through the 2D array `course` stored in PlannerList and prints the
 The diagram below shows the sequence of action upon the user inputting `planner list`
 ![sequence diagram of planner list](./Diagrams/plannerlist.png)
 
+---
 ### `planner add` Command Implementation
 
 #### Overview
@@ -775,6 +846,7 @@ Key design decisions:
 The diagram below shows the sequence of action upon the user inputting `planner add cs2113 y2s2`
 ![sequence diagram of planner add](./Diagrams/plannerAdd.png)
 
+---
 ### `planner remove` Command Implementation
 #### Overview
 The `planner remove` command allows the User to remove the modules that are in the planner should they not want it
@@ -803,7 +875,7 @@ Key design decisions:
 The diagram below shows the sequence of action upon the user inputting `planner remove cs2113`
 ![sequence diagram of planner remove](./Diagrams/plannerRemove.png)
 
-
+---
 ### `planner edit` Command Implementation
 #### Overview
 The `planner edit` command allows the User to make changes to what semester they plan to take a module.
@@ -834,14 +906,13 @@ The diagram below shows the sequence of action upon the user inputting `planner 
 ![sequence diagram of planner edit](./Diagrams/editplanner.png)
 
 ---
-## Product scope
+## 8. Product scope
 ### Target user profile
 - Y1-Y4 Computer Engineering Undergraduate Students (JC path)
 - did not follow the recommended TimeTable
 - has a need to manage complex multi-year university pathways
 - can type fast
 - is reasonably comfortable using CLI apps
-
 
 ### Value proposition
 
@@ -850,7 +921,7 @@ tracking completed modules, monitoring MC progress, and managing graduation requ
 database or internet connection.
 
 ---
-## User Stories
+## 9. User Stories
 
 | Version | As a ...               | I want to ...                                            | So that I can ...                                                    |
 |---------|------------------------|----------------------------------------------------------|----------------------------------------------------------------------|
@@ -876,7 +947,7 @@ database or internet connection.
 | v2.0    | CEG student            | have my planner saved and loaded automatically           | retain my semester plan between sessions                             |
 
 ---
-## Non-Functional Requirements
+## 10. Non-Functional Requirements
 
 1. Should work on any mainstream OS (Windows, macOS, Linux) with Java 17 or above installed.
 2. All data is stored locally and the application should work fully without internet connectivity.
@@ -887,7 +958,7 @@ database or internet connection.
 7. The codebase should follow object-oriented design principles taught in CS2113.
 
 ---
-## Glossary
+## 11. Glossary
 
 * **Module** — A university course unit identified by a code (e.g. CS2113). Each module carries a fixed number of Modular Credits.
 * **MC (Modular Credits)** — A measure of the workload of a module. CEG students must complete 160 MCs to graduate.
@@ -902,7 +973,7 @@ database or internet connection.
 * **User Profile** — A saved record containing the user's name and GPA, used to personalise workload recommendations.
 ---
 
-## Instructions for manual testing
+## 12. Instructions for manual testing
 
 Given below are instructions to test the app manually. These instructions provide a starting point;
 testers are expected to do more exploratory testing.
