@@ -115,178 +115,169 @@ How the `Command` Component work:
 
 The diagrams below show the key classes involved in `Storage` and `ProfileStorage`, and their relationships.
 
-![Class diagram of Storage](https://img.plantuml.biz/plantuml/png/RL5DImCn4BtdL-IOKYsUHKfXGH0KX3ru7fDnEpGV9PdjmTB_RZQRrBMOqynxRrxc9Rl447bqLkp9eDGKjKMH3kIF4C59RI4bO8xqEJA-wE1x-aRv80eXUmuH1fHd8VEvb-TinwGlqePXm2WVvMifRkalilWElC-2FdlxeGZMpK-D2QC7XrT-LGKsW56hoPSIFxq5CrhSLlS1UGQK9RyOpTMCLuy49rIk8Ed6QTAU0Xbn4JNXJDI0wzeg7Spl1NVIwToGvxRbTPCkwygwVr8s6c8NqH2d8idpbNSG3rrmHukCSzgsKtllpMRRCYsXP_e7-8Z4-GUMSA_1-uo97NepVVuF)
-
-![Class diagram of ProfileStorage](https://img.plantuml.biz/plantuml/png/VL9DQyCm3BqR_1zqpEXMTjvXzDGn6ACGoiwgexccZXrifuUM_lSf7zwIBSmNIthlwLd2cvWmfBQsKXnDHQ1CK9QaY2VZ6WnOWx8O8wOKpA5DzAgyAys5u56A7e5Ty9_6KfbyG4rmbGBuFC2LEoUZRc2zrXJW2Txw8EEQqYZTOJeMRQJWi2RcbUpbzDrtD2XMt0YhKR9CttDn96HDn3DbJJFSSsAdEtjJIN6J8iyqmVD0gscnc5dVWswGiygt1swO-JpWEzEAluCmyj9W3moQcVcsV_vF_15CwjOsL4g5pdMf5Byslru_ppUmW6__0xBH0ZnntP2h-Bzy0G00)
-
+![Class diagram of storage component](./Diagrams/StorageUML.png)
 ### `Storage` Implementation
 
 #### Overview
 
-The Storage class is responsible for persisting and retrieving a user’s completed modules from a text file.
+The Storage component is responsible for persisting user data to the local file system. It supports three main data types:
 
-Each user has a separate storage file stored under:
-`data/users/<username>_modules.txt`
-Each line represents one completed module:
-`MODULE_CODE|MC`
+- **Profile data** → stored using `ProfileStorage`
+- **Completed modules** → stored using `ModStorage`
+- **Planner(s)** → stored using `PlannerStorage`
 
-Example:
-CS2113|4
-MA1521|4
-
-#### Design
-
-The storage flow follows this pipeline:
-```
-Command / App → Storage.save(...) → text file → Storage.load() → List<Module> 
-```
-Key design decisions:
-
-- Each user has a separate file (avoids data clashes)
-- Storage centralises all file I/O logic
-- Parsing is delegated to getModule() for cleaner code
-- Assertions enforce valid inputs and file format
-
-#### Implementation
-
-**initialization**
-```java
-public Storage(String username) {
-   assert username != null && !username.trim().isEmpty() : "Username cannot be empty";
-   this.filePath = "data/users/" + username.trim() + "_modules.txt";
-}
-```
-
-**Loading Modules**
-```java 
-public List<Module> load() throws IOException
-```
-
-Steps:
-
-1) Create file and parent directory if necessary
-2) Read file line by line
-3) Skip empty lines
-4) Parse each line into a Module using getModule()
-5) Return list of modules
-
-***Parsing Logic***
-```java
-private Module getModule(String line)
-```
-
-- Splits line using "\\|"
-- Validates format (exactly 2 fields)
-- Parses module code and modular credits
-- Creates a Module and marks it as completed
-
-***Saving Data*** 
-```java
-public void save(List<Module> modules) throws IOException
-```
-
-- Overwrites file with current module list
-- Writes each module as:
-```java
-moduleCode|mc 
-```
-
-#### Sequence Diagram
-
-Save flow
-
-![](https://img.plantuml.biz/plantuml/png/ZPBFQiCm3CRl1h-3ZkcXBx33Q2diDYYCiREmrTRCZesjhAzVEKv7ieLkEGGX_VW-_V6kC6OUWjSA3SSCxuMoLacIphY4FSC-fMNYJJWyqpBvulnAvYCx_gdt6krGMQsg5soVgmCymP0iCe698NbYiX16i6XLwu9Dle8M_A9kAc-gqhqaLBKLfAVh67Od-HsHBvirwanyn4mzZ-Wg4ZwjowLRisdJpSnQOcwfbOynmKasIsWkqqnQWNmpjRQJrb2B3z6E3LLmgcuNEp02_As3-P39EYuFjOBvfRIOxrg3gNUGA-5_SEzwWa9oUXHEA-hjenqQ7ylo1DyluxwqdKZ8Kxq1)
-
-Load Flow
-
-![](https://img.plantuml.biz/plantuml/png/VP9DQiD038NtXhc3bZR45-YYf1IwImc47a2CbMJe_35MI7lxQiRZj7P2lJ2stZTwpvAt8sFYYxEgGSqXmST8IJLHYaQRY9xX9SPbuI0SdcXPV3DsLJbez7xTR1U6ImPLausWVyxjuGbA3C0OhT789dZLP47qwYQC3JYqNJuxrqJElg9vkfR7zYYtFVAvUqITYFUOo7D17oBqPKOU9nkq3BaV3856y84dLJKWr_rHdGYPtkawToS_hDBMcTJ0zQraBeOsX0X7sGAXFekXxyb5_WPhF5NNsg1VJkPN_-Dra-Mpfxct6Upko4cieIgfmq0RSFeVsc7wV0qkMc8gYybWLPVvNDtwUY2tzS_0LWZv6Ny0)
-
-Why This Design?
-- Separates persistence logic from business logic
-- Easy to modify file format in one place
-- Cleaner and more maintainable code
-- Supports multiple users naturally
+Each storage class extends a common abstraction `Storage<T>`.
 
 ---
-### `ProfileStorage` Implementation
-
-The ProfileStorage class manages user profile data.
-
-Each user profile is stored at:
-`data/users/<username>_profile.txt`
-
-Format:
-`NAME|GPA`
-
-Example:
-`Kailer|4.5`
 
 #### Design
 
-Pipeline:
+The storage system follows a **generic abstraction pattern**:
 ```
-App → saveProfile() → file → loadProfile() → UserProfile
+ModStorage, PlannerStorage and ProfileStorage all implements the smae method from Storage class
 ```
-
 Key design decisions:
 
-- Profile storage is separate from module storage
-- Each user has a dedicated profile file
-- getProfilePath() centralises file path logic
-- Returns null if profile does not exist
+- **Generic base class (`Storage<T>`)** centralises file handling logic (path management, directory creation), avoiding duplication.
+- **Specialised subclasses** handle data-specific parsing and formatting.
+- **File-based persistence** is used instead of databases for simplicity and offline usage.
+- **User-based directory structure** ensures data isolation between users.
 
 #### Implementation
 
-Profile Path
-```
-private String getProfilePath(String username)
-```
-builds
-```
-data/users/<username>_profile.txt
-```
+##### Base Class: `Storage<T>`
 
-Loading Profile
+The abstract `Storage<T>` class provides common functionality shared by all storage implementations.
 
-```java 
-public UserProfile loadProfile(String username) throws IOException
-```
+**Responsibilities**
+- Store file path
+- Ensure directories and files exist
+- Provide abstract methods for subclasses
 
-Steps:
-
-1) Validate username
-2) Check if file exists
-3) Return null if not found
-4) Read first valid line
-5) Split into name and GPA
-6) Return UserProfile
-
-Saving Profile
-
+**Key Methods**
 ```java
-public void saveProfile(UserProfile profile) throws IOException
+protected File ensureFileExists()
+protected File ensureParentDirectoryExists()
+public abstract T load() throws IOException
+public abstract void save(T data) throws IOException 
+```
+---
+
+##### Module Storage: `ModStorage`
+
+Stores completed modules for a user.
+
+**File Location**
+```
+data/users/<username>/modules.txt
+```
+**Data Format**
+```
+CS2113|4
+CG2111A|4
 ```
 
-Writes to file:
+**Load Logic**
+1. Ensure file exists
+2. Read each line
+3. Parse:
+    - module code
+    - modular credits
+4. Create `Module` object
+5. Mark module as completed
+
+**Save Logic**
+1. Ensure directory exists
+2. Write each module as:
 ```
-NAME|GPA
+moduleCode|mc
 ```
 
-Sequence Diagram:
+#### Sequence Diagram:
 
-#### Save Profile
+![](Diagrams/SequenceModStorageLoad.png)
 
-![](https://img.plantuml.biz/plantuml/png/jLEz3e8m4Dxx58rJYV4578mkk1aJOfmlS68ZbAQjklZmNg4QVjN5XRJVVJ_7SQoj0-EkPS4WTPNX1uk6QO9aAZKenpTQT-vxKvraWGcH8STEAIPy01oDT3rBdn5i6FCNlbZv7Bxa5cx8TQXvY2hTn40Ae0ZSYB4UZOIj75Bbw7PGeeXO6r-C1IZYZVWDU6GPi3sui_2oqKRYfWE5z_huQjgBeccwTmU3ojMQ3yJoaabZnMHqymbQ3JI0Q0Rt_xaD_BOQVh7BDNnxexi_r8FdSpvxpEX9ggbPzMI5L9WWRIOGxQicBIgBOqD-BszxhzUeClghdW00)
+![](Diagrams/SequenceModStorageSave.png)
+---
 
-#### Load Profile
-![](https://img.plantuml.biz/plantuml/png/VPDDReGm38NtIDp1IqRggFikHjDDroEDUe08N1erE55YrFRsjSDFWK5aWHBdUyzE7Aw9JUI-SsLXQlOHtXF6iWWIjBKDXXXUGrW7Rj5_M8TtmKsBwxqtsLX7xhKXsdfgbj6cBCf2bt2-Q2fu0UTRi0JFCZ4DX0dJJM7MsJDkcZ5OzM94fiEJkcx8FMsBFCPkXZ-NyaUn7aqaXDzvMeL_uH6lAKn4uYmw8hklniPqYE2FJPmHwPTZK0eQZmd8yx1R5Y1Zwp1VBlLEUeqkuI0U7FT5bwbvux77LQLGBa55pli0FR5rOXWJIoLqnYxmBpXBE40w9g_pRXDd5AcPh1_hMRoRiQP5fDBMFK4Rp6dGB-dThFFREhoocSgbNUKh_yiV)
+##### Profile Storage: `ProfileStorage`
 
-#### Why This Design?
-- Clear separation of concerns (modules vs profile)
-- Easy to extend (e.g. add more profile fields)
-- Avoids duplicated file path logic
-- Simple and robust handling of missing profiles
+Stores user profile information.
 
+**File Location**
+```
+data/users/<username>/profile.txt
+```
+**Data Format**
+```
+Username|GPA
+```
+
+**Load Logic**
+1. Check if profile file exists
+2. If not, return `null`
+3. Read first valid line
+4. Parse:
+    - name
+    - GPA
+5. Create `UserProfile` object
+
+**Save Logic**
+1. Ensure directory exists
+2. Write profile as:
+```
+Username|GPA
+```
+
+#### Sequence Diagram:
+
+---
+
+##### Planner Storage: `PlannerStorage`
+
+Stores planned modules and supports multiple planner variations.
+
+**File Location**
+```
+data/users/<username>/plans/<plannerName>.txt
+```
+**Default Planner**
+```
+plan1
+```
+**Data Format**
+```
+CS2113|Y2S1|4
+CS2040C|Y2S2|4
+```
+
+**Load Logic**
+1. Ensure file exists
+2. Read each line
+3. Parse:
+    - module code
+    - semester
+    - modular credits
+4. Create `Module` object
+5. Add module to `PlannerList`
+
+**Save Logic**
+1. Ensure directory exists
+2. Write each module as:
+
+
+**Additional Features**
+- `setPlannerName(String plannerName)`
+- Allows switching between planner files dynamically
+
+- `listPlannerNames()`
+- Returns all planner files in the user's directory
+
+#### Sequence Diagram:
+
+![](Diagrams/SequencePlannerStorageLoad.png)
+
+![](Diagrams/SequencePlannerStorageSave.png)
 ---
 ## 4. Implementation: Shi Yong
 
