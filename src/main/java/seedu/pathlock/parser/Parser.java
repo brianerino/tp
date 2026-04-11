@@ -77,9 +77,10 @@ public class Parser {
                     throw new MissingCommandException("Please input module code and semester after 'add '");
                 }
                 //calculated from the back as y1s1 will be standard
-                int seperator = input.length()-5;
-                String semester = input.substring(seperator).trim();
-                String moduleCode = input.substring(4, seperator).trim();
+                String param = input.substring(4);
+                int seperator = param.indexOf(" ");
+                String moduleCode = param.substring(0, seperator).trim();
+                String semester = param.substring(seperator).trim();
                 return new AddToPlannerCommand(moduleCode,semester);
             }
             if (input.startsWith("edit")) {
@@ -90,7 +91,6 @@ public class Parser {
                 int seperator = param.indexOf(" ");
                 String moduleCode = param.substring(0, seperator).trim();
                 String semester = param.substring(seperator).trim();
-                System.out.println(moduleCode + " " + semester);
                 return new EditPlannerCommand(moduleCode, semester);
             }
             if (input.startsWith("remove")) {

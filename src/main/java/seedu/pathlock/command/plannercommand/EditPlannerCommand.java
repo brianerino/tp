@@ -12,7 +12,7 @@ public class EditPlannerCommand extends Command {
 
     public EditPlannerCommand(String moduleCode, String semester) {
         this.moduleCode = moduleCode.toUpperCase();
-        this.semester = semester;
+        this.semester = semester.toLowerCase();
     }
     public String execute (AppState appState) {
         ModuleList moduleList = appState.getModule();

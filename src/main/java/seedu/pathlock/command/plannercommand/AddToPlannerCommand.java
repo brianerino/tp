@@ -15,7 +15,7 @@ public class AddToPlannerCommand extends Command {
 
     public AddToPlannerCommand(String moduleCode, String semester) {
         this.moduleCode = moduleCode.toUpperCase();
-        this.semester = semester;
+        this.semester = semester.toLowerCase();
     }
 
     @Override
