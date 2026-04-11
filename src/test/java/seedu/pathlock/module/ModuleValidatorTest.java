@@ -26,6 +26,11 @@ public class ModuleValidatorTest {
     }
 
     @Test
+    public void isValidModuleCode_fourLetterPrefix_returnsTrue() {
+        assertTrue(ModuleValidator.isValidModuleCode("ABCD2113"));
+    }
+
+    @Test
     public void isValidModuleCode_nullInput_returnsFalse() {
         assertFalse(ModuleValidator.isValidModuleCode(null));
     }
@@ -43,11 +48,6 @@ public class ModuleValidatorTest {
     @Test
     public void isValidModuleCode_oneLetterPrefix_returnsFalse() {
         assertFalse(ModuleValidator.isValidModuleCode("C2113"));
-    }
-
-    @Test
-    public void isValidModuleCode_fourLetterPrefix_returnsFalse() {
-        assertFalse(ModuleValidator.isValidModuleCode("ABCD2113"));
     }
 
     @Test
