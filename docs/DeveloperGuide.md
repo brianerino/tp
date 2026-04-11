@@ -336,7 +336,7 @@ if (remaining.contains("/mc")) {
 
 **Execution**
 
-1. `ModuleValidator.validateModuleCode()` rejects codes that do not match the NUS format (2–3 letters + 4 digits + optional letter).
+1. `ModuleValidator.validateModuleCode()` rejects codes that do not match the NUS format (2–4 letters + 4 digits + optional letter).
 2. `isRecognisedModule()` determines whether to take the internal or external path.
 3. Both paths call `Storage.save(modules.getCompletedModules())` as the final step to persist the change.
 
