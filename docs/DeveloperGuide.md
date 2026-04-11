@@ -11,7 +11,9 @@
 3. [Implementation: Russell](#3-implementation-russell)
     - [Class Structure](#class-structure)
     - [`Storage` Implementation](#storage-implementation)
-    - [`ProfileStorage` Implementation](#profilestorage-implementation)
+    - [`ModStorage` Implementation](#module-storage-modstorage)
+    - [`ProfileStorage` Implementation](#profile-storage-profilestorage)
+    - [`PlannerStorage` Implementation](#planner-storage-plannerstorage)
 
 4. [Implementation: Shi Yong](#4-implementation-shi-yong)
     - [Class Structure](#class-structure-1)
@@ -231,7 +233,12 @@ Username|GPA
 ```
 
 #### Sequence Diagram:
-Sa
+
+save Profile
+![](Diagrams/SequenceProfileStorageSave.png)
+Load Profile
+![](Diagrams/SequenceProfileStorageLoad.png)
+
 ---
 
 ##### Planner Storage: `PlannerStorage`
