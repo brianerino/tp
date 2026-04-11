@@ -424,7 +424,7 @@ CS2113 is not found in planner
 **A**: Yes. The plan file is human-editable. However, if the format is modified incorrectly, Path Lock may fail to load the file or may reset the data.
 
 **Q: Can I add modules that are not in the CEG required list?**  
-**A**: Yes. Use `done MODULE_CODE /mc NUMBER` to add external or SEP modules with a custom MC value.
+**A**: Yes. Use `done MODULE_CODE /mc NUMBER` to add external with a custom MC value.
 
 **Q: Is Path Lock case-sensitive?**  
 **A**: No. Module codes are case-insensitive.

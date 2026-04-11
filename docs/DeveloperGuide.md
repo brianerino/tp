@@ -963,7 +963,8 @@ database or internet connection.
 * **OR Group** — A set of modules where completing any one satisfies a graduation requirement (e.g. the capstone group: CG4001 or CG4002).
 * **Planner** — The 8-semester planning view (Y1S1 to Y4S2) where students can assign modules to future semesters.
 * **Workload** — The total MCs assigned to a single semester in the planner. PathLock warns if a semester's workload exceeds the GPA-based recommended maximum or falls below the 18 MC minimum.
-* **External Module** — A module not in PathLock's built-in CEG module list (e.g. exchange or cross-faculty modules), added manually with a user-specified MC value.
+* **Internal Module** — A module that is in PathLock's built-in CEG module list.
+* **External Module** — A module not in PathLock's built-in CEG module list (e.g. cross-faculty modules), added manually with a user-specified MC value.
 * **User Profile** — A saved record containing the user's name and GPA, used to personalise workload recommendations.
 ---
 
