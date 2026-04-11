@@ -617,6 +617,10 @@ Maps the user's GPA to a recommended MC maximum workload per semester:
 | 3.0 – 3.99    | 26 MCs                   |
 | Below 3.0     | 24 MCs                   |
 
+> **Note:** For students in their first semester of study, acknowledging that their GPA is 0.00, the system also allows for their input, which will automatically assign their workload to a maximum default of 20 MCs.
+
+The module is always added. The warnings inform rather than block, keeping the user in full control of their planner.
+
 #### Sequence Diagram
 
 ![Sequence Diagram: UserProfile and ProfileStorage](Diagrams/SequenceDiagram_UserProfileProfileStorage.png)

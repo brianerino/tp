@@ -7,6 +7,9 @@ PathLock is a **desktop app for planning your CEG modules**, optimised for use v
 - [Quick Start](#quick-start)
 - [Features](#features)
     - [Viewing help: `help`](#viewing-help--help)
+    - [Exiting PathLock: `exit`](#exiting-pathlock--exit)
+    - [Creating or loading a profile at startup](#Creating-or-loading-a-profile-at-startup)
+    - [Switching to another user profile : `switch`](#Switching-to-another-user-profile--switch)
     - [Listing completed modules: `list completed`](#listing-completed-modules--list-completed)
     - [Listing incomplete modules: `list incomplete`](#listing-incomplete-modules--list-incomplete)
     - [Listing all required modules: `list needed`](#listing-all-required-modules--list-needed)
@@ -19,8 +22,6 @@ PathLock is a **desktop app for planning your CEG modules**, optimised for use v
     - [Removing a module from your planner: `planner remove MODULE_CODE`](#removing-a-module-from-your-planner--planner-remove)
     - [Shifting a module to another semester on your planner: `planner edit MODULE_CODE y#s#`](#shifting-a-module-on-your-planner--planner-edit)
     - [Viewing your planner: `planner list`](#viewing-your-planner--planner)
-    - [Saving your data](#saving-your-data)
-    - [Exiting the program: `exit`](#exiting-the-program--exit)
 - [FAQ](#faq)
 - [Known Issues](#known-issues)
 - [Command Summary](#command-summary)
@@ -91,10 +92,15 @@ Examples:
   done CS3230 /mc 4
 =======================================================================
 ```
+---
+#### Exiting PathLock : `exit`
+
+Exits PathLock. All data is saved automatically before the program closes.
+
+**Format:** `exit`
 
 ---
-
-### Profile Creation
+### Profile Creation & Switching Users
 
 #### Creating or loading a profile at startup
 When the program starts, it prompts the user to enter their name
@@ -131,6 +137,29 @@ Recommended maximum semester workload: 32 MCs
 ```
 
 ---
+#### Switching to another user profile : `switch`
+
+Switches the current session to a different user's profile, loading their saved modules and planner data.
+
+**Format:** `switch USERNAME`
+- `USERNAME` must match an existing saved profile exactly.
+- All current session data is replaced with the switched user's data.
+
+**Examples:**
+- `switch alice` — switches to alice's profile
+
+**Example output:**
+```
+Switched to user: alice
+```
+
+**Example error output:**
+```
+User "alice" does not exist.
+```
+> **Note:** You cannot switch to a user that has not been created yet. Run PathLock fresh and enter the new username at startup to create a new profile first.
+
+---
 ### List Commands
 
 #### Listing completed modules : `list completed`
@@ -146,7 +175,7 @@ Completed modules:
 2. CS2113
 3. CG2111A
 ```
-
+---
 #### Listing incomplete modules : `list incomplete`
 
 Shows all required CEG modules that you have not yet completed.
@@ -160,7 +189,7 @@ Incomplete modules:
 2. EE2026
 3. CS2103 OR CS2113
 ```
-
+---
 #### Listing all required modules : `list needed`
 
 Shows the full list of modules required to graduate from CEG.
@@ -179,7 +208,6 @@ Modules required for graduation:
 
 ---
 ### Module Management Commands
-
 
 #### Marking a module as completed : `done`
 
@@ -251,7 +279,6 @@ CS2113 is not in your module list
 ```
 
 ---
-
 #### Counting MC progress : `count`
 
 Shows your completed and remaining MC progress towards the 160 MCs required for graduation. The count includes both internal CEG modules and any external modules you have added via `done MODULE_CODE /mc NUMBER`.
@@ -263,7 +290,7 @@ Shows your completed and remaining MC progress towards the 160 MCs required for 
 Completed: 40 / 160 MCs (25.0%)
 Incomplete: 120 MCs (75.0%)
 ```
-
+---
 #### Viewing prerequisites : `prereq MODULE_CODE`
 
 Shows the prerequisites needed before taking a specified module. Only modules within the CEG curriculum are recognised.
@@ -293,7 +320,7 @@ CS1010 has no prerequisites.
 ```
 FAKE1234 is not a recognised module.
 ```
-
+---
 #### Viewing modules unlocked : `postreq MODULE_CODE`
 
 Shows the CEG modules that are unlocked by completing a specified module. In other words, it lists all CEG modules that have the given module as a prerequisite.
@@ -367,6 +394,7 @@ Shows all mods the user has added to planner, separated by semesters.
 >=======================================================================
 > ```
 
+---
 #### Adding mods to planner : `planner add`
 
 Allows the user to add modules for a specific semester in the planner
@@ -387,6 +415,8 @@ Current workload for y1s1: 4 MCs
 =======================================================================
 ```
 > **Note:** modules and semesters are not cap sensitive, year and semester to be together i.e. `y2s2` not `y2 s2`
+
+---
 #### Removing mods from planner : `planner remove`
 
 Allows the user to remove modules from the planner
@@ -413,7 +443,7 @@ assumption that cs1231 is not in planner
 CS1231 is not found in planner
 =======================================================================
 ```
-
+---
 #### Editing mods in planner : `planner edit`
 
 Allows the user to change which semester modules are shown in planner
@@ -441,7 +471,6 @@ CS2113 is not found in planner
 ```
 
 ---
-
 ## FAQ
 
 **Q: How do I transfer my data to another computer?**  
@@ -469,6 +498,7 @@ CS2113 is not found in planner
 | Action | Format                         | Example                   |
 |---|--------------------------------|---------------------------|
 | View all commands | `help`                         | `help`                    |
+| Switch user profile | `switch USERNAME` | `switch alice` |
 | View command details | `help COMMAND`                 | `help done`               |
 | Mark module as done | `done MODULE_CODE`             | `done CS2113`             |
 | Add external module | `done MODULE_CODE /mc NUMBER`  | `done SEP101 /mc 4`       |
