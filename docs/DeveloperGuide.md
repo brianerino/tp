@@ -194,10 +194,11 @@ moduleCode|mc
 ```
 
 #### Sequence Diagram:
+Mod Load:
+![Mod Load](Diagrams/SequenceModStorageLoad.png)
 
-![](Diagrams/SequenceModStorageLoad.png)
-
-![](Diagrams/SequenceModStorageSave.png)
+Mod Save:
+![Mod Save](Diagrams/SequenceModStorageSave.png)
 ---
 
 ##### Profile Storage: `ProfileStorage`
@@ -230,7 +231,7 @@ Username|GPA
 ```
 
 #### Sequence Diagram:
-
+Sa
 ---
 
 ##### Planner Storage: `PlannerStorage`
@@ -275,9 +276,11 @@ CS2040C|Y2S2|4
 
 #### Sequence Diagram:
 
-![](Diagrams/SequencePlannerStorageLoad.png)
+Planner Load:
+![Planner Load](Diagrams/SequencePlannerStorageLoad.png)
 
-![](Diagrams/SequencePlannerStorageSave.png)
+Planner Save:
+![Planner Save](Diagrams/SequencePlannerStorageSave.png)
 ---
 ## 4. Implementation: Shi Yong
 
