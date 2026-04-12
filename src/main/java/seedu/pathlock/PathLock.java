@@ -215,7 +215,7 @@ public class PathLock {
                     return plannerStorage.load();
                 }
             } catch (Exception e) {
-
+                //
             }
 
             System.out.println("Invalid choice. Try again.");
