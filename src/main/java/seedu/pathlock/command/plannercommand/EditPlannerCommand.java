@@ -17,10 +17,11 @@ public class EditPlannerCommand extends Command {
     public String execute (AppState appState) {
         ModuleList moduleList = appState.getModule();
         PlannerList course = appState.getPlanner();
-        Module editedModule = moduleList.getModule(moduleCode);
-        if (editedModule == null) {
+        Module original = moduleList.getModule(moduleCode);
+        if (original == null) {
             return "\"" + moduleCode + "\" is not a recognised module.";
         }
+        Module editedModule = new Module(original.getModuleCode(), original.getModularCredits());
 
         try {
             course.editModule(editedModule, semester, moduleCode);

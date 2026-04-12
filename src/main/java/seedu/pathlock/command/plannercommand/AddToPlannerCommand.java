@@ -24,18 +24,21 @@ public class AddToPlannerCommand extends Command {
         PlannerList planner = appState.getPlanner();
         UserProfile profile = appState.getProfile();
 
-        Module module = moduleList.getModule(moduleCode);
+        Module original = moduleList.getModule(moduleCode);
 
-        if (module == null) {
+        if (original == null) {
             throw new IllegalArgumentException("\"" + moduleCode + "\" is not a recognised module.");
         }
+
+        Module module = new Module(original.getModuleCode(), original.getModularCredits());
+
         try {
             module.setSemester(semester);
         } catch (Exception e) {
             return e.getMessage();
         }
-        if (module.isPlanned()) {
-            throw new IllegalArgumentException(moduleCode + " is already in planner");
+        if (planner.containsModule(moduleCode)) {
+            throw new IllegalArgumentException(moduleCode + " is already in this plan");
         }
         planner.addModule(module);
         try {
