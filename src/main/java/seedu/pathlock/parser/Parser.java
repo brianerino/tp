@@ -20,7 +20,7 @@ import seedu.pathlock.command.SwitchUserCommand;
 import seedu.pathlock.command.plannercommand.ListPlannerCommand;
 
 public class Parser {
-
+    //Magic numbers for checking if Command is empty or contains follow up
     private static final int DONE_PREFIX_LENGTH = 5;
     private static final int REMOVE_PREFIX_LENGTH = 8;
     private static final int SWITCH_PREFIX_LENGTH = 8;
@@ -67,7 +67,7 @@ public class Parser {
             String username = input.substring(7).trim();
             return new SwitchUserCommand(username);
         }
-
+        //trims out planner and reads subsequent command
         if (input.startsWith("planner")) {
             input = input.substring(7).trim();
             String[] parts = input.split("\\s+");
@@ -78,7 +78,6 @@ public class Parser {
                 if (input.length() < ADD_PREFIX_LENGTH) {
                     throw new MissingCommandException("Please input module code and semester after 'add '");
                 }
-                //calculated from the back as y1s1 will be standard
                 String param = input.substring(4);
                 int seperator = param.indexOf(" ");
                 String moduleCode = param.substring(0, seperator).trim();

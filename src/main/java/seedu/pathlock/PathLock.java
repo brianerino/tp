@@ -19,6 +19,7 @@ import seedu.pathlock.profile.UserProfile;
 import seedu.pathlock.storage.ModStorage;
 import seedu.pathlock.storage.ProfileStorage;
 import seedu.pathlock.ui.UI;
+import seedu.pathlock.storage.PlannerStorage;
 
 public class PathLock {
     /**
@@ -28,12 +29,14 @@ public class PathLock {
         setupLogging();
 
         Scanner scanner = new Scanner(System.in);
-        PlannerList course = new PlannerList();
+
 
         UI.opening();
 
         UserProfile profile = getOrCreateProfile(scanner);
         ModuleList modules = getModuleList(profile.getName());
+        PlannerList course = selectPlanner(scanner, profile.getName());
+
         AppState appState = new AppState(modules, course, profile, profile.getName());
 
         while (true) {
@@ -179,6 +182,48 @@ public class PathLock {
             } catch (NumberFormatException e) {
                 System.out.println("Please enter a valid GPA.");
             }
+        }
+    }
+    private static PlannerList selectPlanner(Scanner scanner, String username) {
+        PlannerStorage plannerStorage = new PlannerStorage(username);
+
+        var plans = plannerStorage.listPlannerNames();
+
+        if (plans.isEmpty()) {
+            plannerStorage.setPlannerName("plan1");
+
+            try {
+                return plannerStorage.load();
+            } catch (IOException e) {
+                return new PlannerList();
+            }
+        }
+
+        System.out.println("Available plans:");
+        for (int i = 0; i < plans.size(); i++) {
+            System.out.println((i + 1) + ". " + plans.get(i));
+        }
+
+        while (true) {
+            System.out.print("Select a plan by number: ");
+            String input = scanner.nextLine().trim();
+
+            try {
+                int choice = Integer.parseInt(input);
+                if (choice >= 1 && choice <= plans.size()) {
+                    String selectedPlan = plans.get(choice - 1);
+
+                    plannerStorage.setPlannerName(selectedPlan);
+
+                    System.out.println("Loaded plan: " + selectedPlan);
+
+                    return plannerStorage.load();
+                }
+            } catch (Exception e) {
+                //
+            }
+
+            System.out.println("Invalid choice. Try again.");
         }
     }
 }

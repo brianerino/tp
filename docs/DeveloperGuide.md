@@ -11,7 +11,9 @@
 3. [Implementation: Russell](#3-implementation-russell)
     - [Class Structure](#class-structure)
     - [`Storage` Implementation](#storage-implementation)
-    - [`ProfileStorage` Implementation](#profilestorage-implementation)
+    - [`ModStorage` Implementation](#module-storage-modstorage)
+    - [`ProfileStorage` Implementation](#profile-storage-profilestorage)
+    - [`PlannerStorage` Implementation](#planner-storage-plannerstorage)
 
 4. [Implementation: Shi Yong](#4-implementation-shi-yong)
     - [Class Structure](#class-structure-1)
@@ -116,178 +118,177 @@ How the `Command` Component work:
 
 The diagrams below show the key classes involved in `Storage` and `ProfileStorage`, and their relationships.
 
-![Class diagram of Storage](https://img.plantuml.biz/plantuml/png/RL5DImCn4BtdL-IOKYsUHKfXGH0KX3ru7fDnEpGV9PdjmTB_RZQRrBMOqynxRrxc9Rl447bqLkp9eDGKjKMH3kIF4C59RI4bO8xqEJA-wE1x-aRv80eXUmuH1fHd8VEvb-TinwGlqePXm2WVvMifRkalilWElC-2FdlxeGZMpK-D2QC7XrT-LGKsW56hoPSIFxq5CrhSLlS1UGQK9RyOpTMCLuy49rIk8Ed6QTAU0Xbn4JNXJDI0wzeg7Spl1NVIwToGvxRbTPCkwygwVr8s6c8NqH2d8idpbNSG3rrmHukCSzgsKtllpMRRCYsXP_e7-8Z4-GUMSA_1-uo97NepVVuF)
-
-![Class diagram of ProfileStorage](https://img.plantuml.biz/plantuml/png/VL9DQyCm3BqR_1zqpEXMTjvXzDGn6ACGoiwgexccZXrifuUM_lSf7zwIBSmNIthlwLd2cvWmfBQsKXnDHQ1CK9QaY2VZ6WnOWx8O8wOKpA5DzAgyAys5u56A7e5Ty9_6KfbyG4rmbGBuFC2LEoUZRc2zrXJW2Txw8EEQqYZTOJeMRQJWi2RcbUpbzDrtD2XMt0YhKR9CttDn96HDn3DbJJFSSsAdEtjJIN6J8iyqmVD0gscnc5dVWswGiygt1swO-JpWEzEAluCmyj9W3moQcVcsV_vF_15CwjOsL4g5pdMf5Byslru_ppUmW6__0xBH0ZnntP2h-Bzy0G00)
-
+![Class diagram of storage component](./Diagrams/StorageUML.png)
 ### `Storage` Implementation
 
 #### Overview
 
-The Storage class is responsible for persisting and retrieving a user’s completed modules from a text file.
+The Storage component is responsible for persisting user data to the local file system. It supports three main data types:
 
-Each user has a separate storage file stored under:
-`data/users/<username>_modules.txt`
-Each line represents one completed module:
-`MODULE_CODE|MC`
+- **Profile data** → stored using `ProfileStorage`
+- **Completed modules** → stored using `ModStorage`
+- **Planner(s)** → stored using `PlannerStorage`
 
-Example:
-CS2113|4
-MA1521|4
-
-#### Design
-
-The storage flow follows this pipeline:
-```
-Command / App → Storage.save(...) → text file → Storage.load() → List<Module> 
-```
-Key design decisions:
-
-- Each user has a separate file (avoids data clashes)
-- Storage centralises all file I/O logic
-- Parsing is delegated to getModule() for cleaner code
-- Assertions enforce valid inputs and file format
-
-#### Implementation
-
-**initialization**
-```java
-public Storage(String username) {
-   assert username != null && !username.trim().isEmpty() : "Username cannot be empty";
-   this.filePath = "data/users/" + username.trim() + "_modules.txt";
-}
-```
-
-**Loading Modules**
-```java 
-public List<Module> load() throws IOException
-```
-
-Steps:
-
-1) Create file and parent directory if necessary
-2) Read file line by line
-3) Skip empty lines
-4) Parse each line into a Module using getModule()
-5) Return list of modules
-
-***Parsing Logic***
-```java
-private Module getModule(String line)
-```
-
-- Splits line using "\\|"
-- Validates format (exactly 2 fields)
-- Parses module code and modular credits
-- Creates a Module and marks it as completed
-
-***Saving Data*** 
-```java
-public void save(List<Module> modules) throws IOException
-```
-
-- Overwrites file with current module list
-- Writes each module as:
-```java
-moduleCode|mc 
-```
-
-#### Sequence Diagram
-
-Save flow
-
-![](https://img.plantuml.biz/plantuml/png/ZPBFQiCm3CRl1h-3ZkcXBx33Q2diDYYCiREmrTRCZesjhAzVEKv7ieLkEGGX_VW-_V6kC6OUWjSA3SSCxuMoLacIphY4FSC-fMNYJJWyqpBvulnAvYCx_gdt6krGMQsg5soVgmCymP0iCe698NbYiX16i6XLwu9Dle8M_A9kAc-gqhqaLBKLfAVh67Od-HsHBvirwanyn4mzZ-Wg4ZwjowLRisdJpSnQOcwfbOynmKasIsWkqqnQWNmpjRQJrb2B3z6E3LLmgcuNEp02_As3-P39EYuFjOBvfRIOxrg3gNUGA-5_SEzwWa9oUXHEA-hjenqQ7ylo1DyluxwqdKZ8Kxq1)
-
-Load Flow
-
-![](https://img.plantuml.biz/plantuml/png/VP9DQiD038NtXhc3bZR45-YYf1IwImc47a2CbMJe_35MI7lxQiRZj7P2lJ2stZTwpvAt8sFYYxEgGSqXmST8IJLHYaQRY9xX9SPbuI0SdcXPV3DsLJbez7xTR1U6ImPLausWVyxjuGbA3C0OhT789dZLP47qwYQC3JYqNJuxrqJElg9vkfR7zYYtFVAvUqITYFUOo7D17oBqPKOU9nkq3BaV3856y84dLJKWr_rHdGYPtkawToS_hDBMcTJ0zQraBeOsX0X7sGAXFekXxyb5_WPhF5NNsg1VJkPN_-Dra-Mpfxct6Upko4cieIgfmq0RSFeVsc7wV0qkMc8gYybWLPVvNDtwUY2tzS_0LWZv6Ny0)
-
-Why This Design?
-- Separates persistence logic from business logic
-- Easy to modify file format in one place
-- Cleaner and more maintainable code
-- Supports multiple users naturally
+Each storage class extends a common abstraction `Storage<T>`.
 
 ---
-### `ProfileStorage` Implementation
-
-The ProfileStorage class manages user profile data.
-
-Each user profile is stored at:
-`data/users/<username>_profile.txt`
-
-Format:
-`NAME|GPA`
-
-Example:
-`Kailer|4.5`
 
 #### Design
 
-Pipeline:
+The storage system follows a **generic abstraction pattern**:
 ```
-App → saveProfile() → file → loadProfile() → UserProfile
+ModStorage, PlannerStorage and ProfileStorage all implements the smae method from Storage class
 ```
-
 Key design decisions:
 
-- Profile storage is separate from module storage
-- Each user has a dedicated profile file
-- getProfilePath() centralises file path logic
-- Returns null if profile does not exist
+- **Generic base class (`Storage<T>`)** centralises file handling logic (path management, directory creation), avoiding duplication.
+- **Specialised subclasses** handle data-specific parsing and formatting.
+- **File-based persistence** is used instead of databases for simplicity and offline usage.
+- **User-based directory structure** ensures data isolation between users.
 
 #### Implementation
 
-Profile Path
-```
-private String getProfilePath(String username)
-```
-builds
-```
-data/users/<username>_profile.txt
-```
+##### Base Class: `Storage<T>`
 
-Loading Profile
+The abstract `Storage<T>` class provides common functionality shared by all storage implementations.
 
-```java 
-public UserProfile loadProfile(String username) throws IOException
-```
+**Responsibilities**
+- Store file path
+- Ensure directories and files exist
+- Provide abstract methods for subclasses
 
-Steps:
-
-1) Validate username
-2) Check if file exists
-3) Return null if not found
-4) Read first valid line
-5) Split into name and GPA
-6) Return UserProfile
-
-Saving Profile
-
+**Key Methods**
 ```java
-public void saveProfile(UserProfile profile) throws IOException
+protected File ensureFileExists()
+protected File ensureParentDirectoryExists()
+public abstract T load() throws IOException
+public abstract void save(T data) throws IOException 
+```
+---
+
+##### Module Storage: `ModStorage`
+
+Stores completed modules for a user.
+
+**File Location**
+```
+data/users/<username>/modules.txt
+```
+**Data Format**
+```
+CS2113|4
+CG2111A|4
 ```
 
-Writes to file:
+**Load Logic**
+1. Ensure file exists
+2. Read each line
+3. Parse:
+    - module code
+    - modular credits
+4. Create `Module` object
+5. Mark module as completed
+
+**Save Logic**
+1. Ensure directory exists
+2. Write each module as:
 ```
-NAME|GPA
+moduleCode|mc
 ```
 
-Sequence Diagram:
+#### Sequence Diagram:
+Mod Load:
+![Mod Load](Diagrams/SequenceModStorageLoad.png)
 
-#### Save Profile
+Mod Save:
+![Mod Save](Diagrams/SequenceModStorageSave.png)
+---
 
-![](https://img.plantuml.biz/plantuml/png/jLEz3e8m4Dxx58rJYV4578mkk1aJOfmlS68ZbAQjklZmNg4QVjN5XRJVVJ_7SQoj0-EkPS4WTPNX1uk6QO9aAZKenpTQT-vxKvraWGcH8STEAIPy01oDT3rBdn5i6FCNlbZv7Bxa5cx8TQXvY2hTn40Ae0ZSYB4UZOIj75Bbw7PGeeXO6r-C1IZYZVWDU6GPi3sui_2oqKRYfWE5z_huQjgBeccwTmU3ojMQ3yJoaabZnMHqymbQ3JI0Q0Rt_xaD_BOQVh7BDNnxexi_r8FdSpvxpEX9ggbPzMI5L9WWRIOGxQicBIgBOqD-BszxhzUeClghdW00)
+##### Profile Storage: `ProfileStorage`
 
-#### Load Profile
-![](https://img.plantuml.biz/plantuml/png/VPDDReGm38NtIDp1IqRggFikHjDDroEDUe08N1erE55YrFRsjSDFWK5aWHBdUyzE7Aw9JUI-SsLXQlOHtXF6iWWIjBKDXXXUGrW7Rj5_M8TtmKsBwxqtsLX7xhKXsdfgbj6cBCf2bt2-Q2fu0UTRi0JFCZ4DX0dJJM7MsJDkcZ5OzM94fiEJkcx8FMsBFCPkXZ-NyaUn7aqaXDzvMeL_uH6lAKn4uYmw8hklniPqYE2FJPmHwPTZK0eQZmd8yx1R5Y1Zwp1VBlLEUeqkuI0U7FT5bwbvux77LQLGBa55pli0FR5rOXWJIoLqnYxmBpXBE40w9g_pRXDd5AcPh1_hMRoRiQP5fDBMFK4Rp6dGB-dThFFREhoocSgbNUKh_yiV)
+Stores user profile information.
 
-#### Why This Design?
-- Clear separation of concerns (modules vs profile)
-- Easy to extend (e.g. add more profile fields)
-- Avoids duplicated file path logic
-- Simple and robust handling of missing profiles
+**File Location**
+```
+data/users/<username>/profile.txt
+```
+**Data Format**
+```
+Username|GPA
+```
 
+**Load Logic**
+1. Check if profile file exists
+2. If not, return `null`
+3. Read first valid line
+4. Parse:
+    - name
+    - GPA
+5. Create `UserProfile` object
+
+**Save Logic**
+1. Ensure directory exists
+2. Write profile as:
+```
+Username|GPA
+```
+
+#### Sequence Diagram:
+
+save Profile
+![](Diagrams/SequenceProfileStorageSave.png)
+Load Profile
+![](Diagrams/SequenceProfileStorageLoad.png)
+
+---
+
+##### Planner Storage: `PlannerStorage`
+
+Stores planned modules and supports multiple planner variations.
+
+**File Location**
+```
+data/users/<username>/plans/<plannerName>.txt
+```
+**Default Planner**
+```
+plan1
+```
+**Data Format**
+```
+CS2113|Y2S1|4
+CS2040C|Y2S2|4
+```
+
+**Load Logic**
+1. Ensure file exists
+2. Read each line
+3. Parse:
+    - module code
+    - semester
+    - modular credits
+4. Create `Module` object
+5. Add module to `PlannerList`
+
+**Save Logic**
+1. Ensure directory exists
+2. Write each module as:
+
+
+**Additional Features**
+- `setPlannerName(String plannerName)`
+- Allows switching between planner files dynamically
+
+- `listPlannerNames()`
+- Returns all planner files in the user's directory
+
+#### Sequence Diagram:
+
+Planner Load:
+![Planner Load](Diagrams/SequencePlannerStorageLoad.png)
+
+Planner Save:
+![Planner Save](Diagrams/SequencePlannerStorageSave.png)
 ---
 ## 4. Implementation: Shi Yong
 
@@ -617,6 +618,10 @@ Maps the user's GPA to a recommended MC maximum workload per semester:
 | 3.0 – 3.99    | 26 MCs                   |
 | Below 3.0     | 24 MCs                   |
 
+> **Note:** For students in their first semester of study, acknowledging that their GPA is 0.00, the system also allows for their input, which will automatically assign their workload to a maximum default of 20 MCs.
+
+The module is always added. The warnings inform rather than block, keeping the user in full control of their planner.
+
 #### Sequence Diagram
 
 ![Sequence Diagram: UserProfile and ProfileStorage](Diagrams/SequenceDiagram_UserProfileProfileStorage.png)
@@ -633,7 +638,7 @@ Maps the user's GPA to a recommended MC maximum workload per semester:
 
 The diagram below shows the key classes involved in the `prereq`, `postreq`, and `count` commands and their relationships.
 
-![Class diagram of prereq, postreq and count commands](./Diagrams/ClassDiagram_PrereqPostreqCountCommands.png)
+![Class diagram of prereq, postreq and count commands](https://www.plantuml.com/plantuml/png/hLLTR-eu47tdLunuMTXxgUvzsOUeMvNIQhSI7sYXRvKgrnd0gcEdzaJgBjl_VcqJOqYGIgNoajXpVCwPoNW0kBR435M5x02G88amainQk1LiRLYHGMdGuEjtABMbyC9K3bnNYc2aYyAlmWcqdGx0HkG84vrN4XV4gB9G86rqRcEC2yCbkfLz4QfaJWAuFpuaCkAv8hpdMYt4VmW_F5-8GNVBdfqwu_J-g6hLBZ2xTx3jGFXz0tn3xbXwh2oz0SnWMB_rCrWu3RLssFV4FMV6eaaCM-l0Whz3wGErGCzvhIWIzBCetA0AfMfw6kmPfLwlqMGm3iyOBdord52EaJzQEUBhjN7z2FnqqYF__JvfzFCgSstfQmiI2R--8Z4SNKORMTtDOs4fag-HTfkzVYES20_spqqyXPUpvN3yzDS_mzk7uV9-DdsQZ1OP24Nm9_pyuqVqmQJSgLXdWvMNkxo-rz9NaHRV28rYvs1zQhkkguGLXFPKZUDBgnpsGKdDNp2_-VUSSs68JBZjfSY92gRgyNP730eUwXANvQ7t37prwqptrR1XB6L7GwgLYVUTR3N3p8mCveA2ywJUBbx_f8LlmheEBYKIvXxohBL4fcBogAe2kbl_GCD8QEM6tg7RCFaED_Obkf-EPfFv-6vvLs_4vMszde-7q-b-zJ1Dwo0TR-hb_uF1yJHh1jC0QSKQrzxnnXbxSN7Lc94PS8ECq1w30li7cAZIGdMW8UBGwNfdu62vXPNHHGUYqiV0AFSHzBHy6WRUA9FIFgfsjxJzd3wPBauqTfPQ-vBsdTkKnc3GEBhHqlzn7svsVtO3hljxjzxs4beH4of18M2EUzJHiV1nb7PQ4bS4UdL0dMKnhKvePVBDZnPkPik_8Ksw4FI9DgOQa0uXqiGay7Y_O3Ao5-5IvK5uRy28zQRbu5IH0kk2CsMz2oXgEQ5EcU8Rv2yMaF4DQ8M_xI97Kmcah-DA6w0DXl1hXKPW3dw-DRrUkqLLo5y0)
 
 ### `prereq` Command Implementation
 
@@ -669,7 +674,7 @@ Key design decisions:
 
 The diagram below shows the execution path for `prereq CS2113`:
 
-![Sequence Diagram for prereq Command](./Diagrams/SequenceDiagram_PrereqCommand.png)
+![Sequence Diagram for prereq Command](https://www.plantuml.com/plantuml/png/dLJDYjim4BxdAGQVl0UNtROdivWjs-CM2c4VGCZJHDIs76bK-lYLvOc5P2NGpI5XukzdvjF802-MX24t3WS0KZGW7F7YS988tvKu6J6sC1iqU85NFOvYwZrGID86tYqQNyoUhwIQnKHGjJy5dT-q_5s1i70j2YZZoOmnHPtWoPO1cFopmt-RvoC9mW2z5ZlK3zsx0T-KfO2BvGraHE7X065YQBfjBcYXkePp_FpqzALQmr5_lFc6yip826opwBIBeqKUgCw47b8bpaWQ37KM1IisNVh4Mpm_hvIkgwkYSgwKy9kcYzuzCkksVngD7Fk4nh0yZhnb_8lI4TQ23_5El_k6k-tilT89QJsxEj68sn71JQ6HCN0jpv2HYzvndrRt5U2KLOIsV02HiYYAWTWM9atmIxibt_29m6ApB0xA1gO0WrAV9cMnPyLFotBYO97h6-fnZj8C3upF-azKeCcZM5TxAHZOOr4Wp3zfnhCdF_gF3Cx2xbJ2z02SW4Tys2G9n8Te-Cgso-_ZryVNpScdktxp2XMFFDNFhf11wmQwS_dIo-J9x_ngCMeYM-R7b_ABRywDmpy0)
 
 #### Why This Design?
 
@@ -708,7 +713,7 @@ Identical pattern to `prereq` — checks for the `postreq ` prefix and throws `M
 
 The diagram below shows the execution path for `postreq CS1010`:
 
-![Sequence Diagram for postreq Command](./Diagrams/SequenceDiagram_PostreqCommand.png)
+![Sequence Diagram for postreq Command](https://www.plantuml.com/plantuml/png/dLHBRjim4Dtp50EjNA0sdA8hBuAqwJ810XW-04jD8w8KgP2ZeZvJZz1TJjQHJB4KGs-oicczptipeky2IKzZRmHfCWX7V1dHAeHlMZvxsHzWS84yli2zwtjfMo4LEG-dW5uCJDLA3z8ID8SdITs3KpyRa06MmnkCPs94-8h6nInwpRZrJmN-op0SIHBEoELGO1vTEnfyq85crFzZ5PTXX9XQmlOsjO43D6aUnvlzpRwPvg5_iMi22P7WJBtKPE8mVOajDgNAXoGJ2K9vv5FPFggnxle1wx_-kL1U_swQGhMYisPlKr3HOiaflTVpK7sRSw9A6a4rAlv6DH9kP5pOzPnlWjwcBRFECz9bKvjC8Rq52RYjPUXdOiYo9sR5DNjhSjzmiePBOllrN1bwHXB2E3S0UtNH6RG5QKpK4G2GmPDZRFdaaUECEcZ2m6KdTE6IAS2s33pC_EammrgianEZvAiEUPNwHoO4obcIsWPOYjTIrItJ4vnMB0s1TSj2O8mZBJBLjnYzeNNCj8uY6wGzWwCE_IAxQmIQWD39y4wdnu85ty_nzXxuyzF-y_x-8-nsR3IrglUjtxjqbpo6qT3rAvXVAsQUuX-BrvP2ZHp1ueuJZRtv1m00)
 
 #### Why This Design?
 
@@ -743,7 +748,7 @@ PathLock (Main) → Parser → CountCommand → AppState → ModuleList
 
 The diagram below shows the execution path for `count`:
 
-![Sequence Diagram for count Command](./Diagrams/SequenceDiagram_CountCommand.png)
+![Sequence Diagram for count Command](https://www.plantuml.com/plantuml/png/TP91RiCW44Ntd6BaLRh81LX4gT9b8bMASW24HocgiLqOgjwfH-Wk9wl1X8nDkpFsU_xpWRqdvIZOJf2X3k6C7m5xZV1YrDKfAq4FeISu3DQglXLAq-3Wuj69SHADDgEQFZVoLT7RST3l3IWFzqN5k4dCXAl_SOXHEIbH_CMAVHx7Cod2nDqNA-OqjA73e_6KgCTIYDW0jhioAKXeKjCcLZIVYl3HGXGg6Iww4iRua8VRPFc9swcXTZYjbatIfnJFNuE4s_UCttus-K-Lkp2sPHxHOitph6LNRLjkp13lMOs6NwW3uKRbhVvlljM0kt8s8E6AD9y1RrVEhe3REjqcpREPYrSbidE6V7rFshD81WZ6_X7hq8UEM2fJrxbyWokpsgM2Hk-IBvGpFNccLXTnZtqRRFSB)
 
 #### Why This Design?
 

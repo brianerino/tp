@@ -29,7 +29,9 @@ I designed and implemented the `UserProfile` class, which stores the user's name
 | 3.0 – 3.99    | 26 MCs                   |
 | Below 3.0     | 24 MCs                   |
 
-The class enforces input validation at construction time. Invalid names or GPAs outside the 2.0–5.0 range throw an `IllegalArgumentException` immediately, so invalid `UserProfile` objects can never exist in the system. Both fields are `final`, making the profile immutable for the duration of the session.
+The class enforces input validation at construction time. Invalid names or GPAs outside the 2.0–5.0 range throw an `IllegalArgumentException` immediately, so invalid `UserProfile` objects can never exist in the system. 
+
+> **Note:** For students in their first semester of study, acknowledging that their GPA is 0.00, the system also allows for their input, which will automatically assign their workload to a maximum default of 20 MCs.
 
 **Why this matters:** Students planning their semesters have very different capacities depending on their academic standing. A student with a 4.8 GPA taking 32 MCs is very different from a student with a 2.5 GPA attempting the same — this feature gives personalised guidance rather than a one-size-fits-all cap.
 
@@ -37,7 +39,7 @@ The class enforces input validation at construction time. Invalid names or GPAs 
 
 #### 2. ProfileStorage (Persistent User Profile)
 
-I implemented `ProfileStorage`, which persists and retrieves the user's profile between sessions. Each user gets a dedicated file at `data/users/<username>_profile.txt` in the format `NAME|GPA`.
+I implemented the baseline `ProfileStorage`, which persists and retrieves the user's profile between sessions. Each user gets a dedicated file at `data/users/<username>_profile.txt` in the format `NAME|GPA`.
 
 On app launch, PathLock checks for a saved profile. If found, it loads it directly and greets the returning user. If not found, it prompts for a GPA and saves the new profile. This means returning users never have to re-enter their GPA.
 
@@ -93,13 +95,23 @@ All three commands are read-only and follow the same thin-wrapper pattern: each 
 
 ### Contributions to the User Guide (UG)
 
-- Wrote the skeleton of the User Guide including Table of Contents, Quick Start,FAQ, Known Issues and Command Summary for future modifying. 
-- Wrote the `help` command section, including usage format, both modes (`help` and `help <command>`), and example outputs for all supported topics.
+- Wrote the skeleton of the User Guide including Table of Contents, Quick Start, FAQ, Known Issues and Command Summary for future modifying. 
+- Wrote the PathLock System Commands Section which included:
+   - `help` command section, including usage format, both modes (`help` and `help <command>`), and example outputs for all supported topics.
+   - `exit` command section
+- Wrote the `switch` command section, including usage format and example outputs.
 - Wrote the `list completed`, `list incomplete`, and `list needed` command sections, including usage format and example outputs.
 
 ---
 
 ### Contributions to the Developer Guide (DG)
+
+- Formatted the entire DG and sectioned it to be more readable. Produced the Table of Contents
+
+- Wrote the **Command.java** API section:
+    - Explanation on how the Command.java API works
+    - Class diagram for related classes
+    - Sequence diagrams for general command flow
 
 - Wrote the `list` Commands implementation section:
     - Design pipeline and rationale
@@ -128,6 +140,8 @@ All three commands are read-only and follow the same thin-wrapper pattern: each 
 - Maintained and updated the `HelpCommand` to stay in sync with new commands added by teammates throughout the project
 - Updated the User/Developer Guide structure to ensure consistent section formatting across all team members' contributions
 - Helped teammates fix Checkstyle or Code errors when there were problems with the Java CI checks. Also edited EXPECTED.txt to fit new implementations.
+- Renamed files, reviewed comments whenever applicable for teammates.
+- Provided input and thoughts in group chat and during meetings to certain functionalities in design for groupmates.
 
 
 
