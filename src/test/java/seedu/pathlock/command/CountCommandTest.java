@@ -98,4 +98,3 @@ public class CountCommandTest {
         assertFalse(result.contains("-"));
     }
 }
-
