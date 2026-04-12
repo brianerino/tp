@@ -1,79 +1,83 @@
 # Shi Yong - Project Portfolio Page
 
-## PathLock: Overview
-PathLock is a desktop CLI application designed to help Computer Engineering (CEG) students at NUS plan and track their multi-year academic journey. It enables students to record completed modules, monitor MC progress towards the 160-MC graduation requirement, check prerequisite and post-requisite chains, and organise planned modules across semesters — all offline, with data stored in a human-editable file.
+### Project: PathLock
 
-## Summary of Contributions
+PathLock is a desktop CLI application designed to help Computer Engineering (CEG) students
+at NUS plan and track their multi-year academic journey. It enables students to record completed
+modules, monitor MC progress towards the 160-MC graduation requirement, check prerequisite
+and post-requisite chains, and organise planned modules across semesters — all offline, with
+data stored in a human-editable file.
 
-### Code Contributed
+Given below are my contributions to the project.
 
-View my code contributions on the tP Code Dashboard: [ShiYong: RepoSense tP Code Contributions](https://nus-cs2113-ay2526-s2.github.io/tp-dashboard/?search=shiyong52&breakdown=true&sort=groupTitle%20dsc&sortWithin=title&since=2026-02-20T00%3A00%3A00&timeframe=commit&mergegroup=&groupSelect=groupByRepos&checkedFileTypes=docs~functional-code~test-code~other&filteredFileName=)
 
----
+- **New Feature:** `done` Command (Internal and External Modules)
 
-## Enhancements Implemented
+  - What it does: Marks a module as completed and records it towards the user's graduation
+    progress. Supports both internal CEG modules (MC looked up automatically) and external
+    modules (user supplies MC via `/mc`).
+  - Justification: This is the core input mechanism of PathLock — without it, no progress
+    can be tracked. Supporting external modules is essential because CEG students routinely
+    take cross-faculty electives not in the built-in database.
+  - Highlights: Handles two structurally different execution paths through a shared command
+    interface. Required designing `ModuleValidator` from scratch to centralise NUS-specific
+    validation rules (module code format, MC value, MC mismatch), and splitting
+    `DoneCommand.execute()` into `handleInternalModule()` and `handleExternalModule()` to
+    avoid deeply nested logic. Integrates tightly with both `ModuleList` and `Storage`.
 
-### 1. `done` Command (Internal and External Modules)
 
-Implemented the full `done` command, which marks a module as completed and records it towards the user's graduation progress.
+- **New Feature:** `remove` Command
 
-- **Internal modules** (e.g. `done CS2113`): the MC value is looked up automatically from the module database.
-- **External modules** (e.g. `done GEC1001 /mc 4`): the user supplies the MC count via the `/mc` flag.
+  - What it does: Undoes a previously recorded module completion, resetting it back to
+    incomplete. Supports both internal and external modules.
+  - Justification: Users may record a module by mistake or change their academic plan.
+    Without `remove`, the only fix would be manually editing the save file.
+  - Highlights: The key design decision was calling `module.markIncompleted()` rather than
+    deleting the `Module` object for internal modules. This preserves the shared `allModules`
+    map that `list`, `count`, `prereq`, and `postreq` all depend on. External modules are
+    fully discarded via `externalModules.remove()` since they have no shared dependents.
+    An `isRemovable()` guard ensures only completed modules can be removed.
 
-**Key implementation details:**
 
-- Designed and implemented `ModuleValidator`, a dedicated validation class that centralises all input checks — NUS module code format (2–3 letters + 4 digits + optional letter), MC value validity, and MC mismatch detection. This keeps `DoneCommand` focused solely on orchestration.
-- Split `DoneCommand.execute()` into two private helpers — `handleInternalModule()` and `handleExternalModule()` — to cleanly separate the two execution paths, avoiding deeply nested if/else logic.
-- Parsing is handled by `parseDone()`, which splits on the `/mc` flag so that `DoneCommand` always receives a fully-parsed command object and never needs to interpret raw strings itself.
-- Both paths persist changes by calling `Storage.save(modules.getCompletedModules())` as a final step.
+- **New Feature:** Duplicate Module Check
 
-This enhancement is non-trivial because it handles two structurally different execution paths through a shared command interface, enforces NUS-specific validation rules, and integrates tightly with both `ModuleList` and `Storage`.
+  - What it does: Prevents a user from recording the same module as completed more than
+    once. Applies to both internal and external modules and surfaces as a clear error message.
+  - Justification: Without this check, duplicate entries would silently inflate the MC count
+    and corrupt graduation progress tracking.
 
----
 
-### 2. `remove` Command
+- **Code Contributed:** [RepoSense link](https://nus-cs2113-ay2526-s2.github.io/tp-dashboard/?search=shiyong52&breakdown=true&sort=groupTitle%20dsc&sortWithin=title&since=2026-02-20T00%3A00%3A00&timeframe=commit&mergegroup=&groupSelect=groupByRepos&checkedFileTypes=docs~functional-code~test-code~other&filteredFileName=)
 
-Implemented `RemoveCommand` and `ModuleList.removeModule()`.
 
-**Key implementation details:**
+- **Project Management:**
 
-- Input is normalised via `toUpperCase()` in the `RemoveCommand` constructor, ensuring module codes are canonicalised at the boundary before any logic runs.
-- `isRemovable()` guards the operation — only modules with `COMPLETED` status can be removed, preventing invalid state transitions.
-- For **internal modules**, `module.markIncompleted()` is called rather than deleting the `Module` object. This preserves the `allModules` map, which `list`, `count`, `prereq`, and `postreq` commands all depend on to function correctly.
-- For **external modules**, `externalModules.remove(code)` is called instead, since external modules have no shared dependents and can be fully discarded.
+  - Generated the v1.0 release on GitHub.
+  - Monitored the issue tracker and ensured all issues were closed before each iteration end.
 
----
+- **Enhancements to existing features:**
+  - Added structured `java.util.logging` across `DoneCommand`, `RemoveCommand`,
+    `ModuleList`, and `ModuleValidator` at appropriate log levels (`FINE`, `WARNING`,
+    `SEVERE`), making runtime behaviour traceable without modifying production output.
+  - Enforced case-insensitive module code input consistently via `toUpperCase()` at command
+    boundaries (`RemoveCommand` constructor, `removeModule()`), preventing silent mismatches
+    from mixed-case user input.
+  - Added defensive `assert` statements throughout (`modules != null`, `mc > 0`,
+    `moduleCode != null`) to catch programming errors at the earliest possible point.
 
-### 3. Duplicate Module Check
+- **Documentation:**
 
-Implemented a duplicate module check inside `ModuleList`, preventing a user from recording the same module as completed more than once. The check applies to both internal and external modules and surfaces to the user as a clear error message.
-
----
-
-## Contributions to the User Guide
-
-- **`done` command:** Wrote full documentation covering both the internal and external module paths, all error messages (duplicate module, invalid format, missing `/mc`), and usage examples.
-- **`remove` command:** Wrote usage documentation, including both the success and not-found output messages.
-
----
-
-## Contributions to the Developer Guide
-
-- **`done` Command** — Class Structure, Design, Implementation, Sequence Diagrams, and Design Rationale
-    - Includes the class diagram for `DoneCommand` and related classes
-    - Includes two sequence diagrams: one for the internal module path (`done CS2113`) and one for the external module path (`done GEC1001 /mc 4`)
-- **`remove` Command** — Design, Implementation, Sequence Diagram, and Design Rationale
-    - Includes the sequence diagram for `remove CS2113`
-- **Duplicate Module Check** — Overview and Sequence Diagram
-    - Includes the sequence diagram for the duplicate check flow
-- **Architecture** — Overview and Architecture Diagram
-    - Includes a high-level architecture diagram and description
----
-
-## Contributions to Team-Based Tasks
-
-- **Module validation rules:** Helped set up and agree on the NUS module code format rules now enforced consistently across the codebase by `ModuleValidator`.
-- **Project architecture setup:** Set up the initial package structure (`commands` and `module` packages), and wrote the foundational code for `Module.java` and `ModuleList.java` that all other teammates built their features on top of.
-- **Code quality enforcement:** Identified and fixed Checkstyle errors early in the project, and reminded teammates to ensure their branches pass the GitHub CI check (`Java CI / build`) before merging pull requests. This helped keep the main branch in a consistently buildable state throughout the project.
-- **Release management:** Generated the v1.0 release on GitHub.
-- **Issue tracker management:** Monitored the progress of issues on the issue tracker and ensured all issues were marked as completed before closing each project iteration.
+  - **User Guide:** 
+    - Wrote full documentation for `done` (both paths, all error messages, usage examples) and `remove` (success and not-found outputs).
+  - **Developer Guide:** 
+    - Wrote the `done` command section (class diagram, two sequence
+      diagrams, design rationale), `remove` command section (sequence diagram, design
+      rationale), duplicate module check section, and the architecture overview with diagram.
+  
+- **Community:**
+  - Set up the initial package structure (`commands` and `module` packages) and wrote the
+    foundational `Module.java` and `ModuleList.java` that all teammates built on top of.
+  - Identified and fixed Checkstyle errors early and enforced CI hygiene (`Java CI / build`)
+    across the team, keeping the main branch consistently buildable.
+  - Helped establish the NUS module code format rules now enforced consistently across the
+    codebase by `ModuleValidator`.
