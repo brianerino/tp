@@ -48,8 +48,6 @@ Implemented `RemoveCommand` and `ModuleList.removeModule()`.
 
 Implemented a duplicate module check inside `ModuleList`, preventing a user from recording the same module as completed more than once. The check applies to both internal and external modules and surfaces to the user as a clear error message.
 
-For recognised modules, isRemovable() guards the operation: only completed modules can be removed — and on success, markIncompleted() soft-deletes the entry in place. For external modules (not in allModules), the module is instead fully removed from externalModules since no other command depends on that map.
-
 ---
 
 ## Contributions to the User Guide
