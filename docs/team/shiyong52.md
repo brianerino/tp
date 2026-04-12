@@ -12,7 +12,6 @@ Given below are my contributions to the project.
 
 
 - **New Feature:** `done` Command (Internal and External Modules)
-
   - What it does: Marks a module as completed and records it towards the user's graduation
     progress. Supports both internal CEG modules (MC looked up automatically) and external
     modules (user supplies MC via `/mc`).
@@ -27,7 +26,6 @@ Given below are my contributions to the project.
 
 
 - **New Feature:** `remove` Command
-
   - What it does: Undoes a previously recorded module completion, resetting it back to
     incomplete. Supports both internal and external modules.
   - Justification: Users may record a module by mistake or change their academic plan.
@@ -40,7 +38,6 @@ Given below are my contributions to the project.
 
 
 - **New Feature:** Duplicate Module Check
-
   - What it does: Prevents a user from recording the same module as completed more than
     once. Applies to both internal and external modules and surfaces as a clear error message.
   - Justification: Without this check, duplicate entries would silently inflate the MC count
@@ -51,7 +48,6 @@ Given below are my contributions to the project.
 
 
 - **Project Management:**
-
   - Generated the v1.0 release on GitHub.
   - Monitored the issue tracker and ensured all issues were closed before each iteration end.
 
@@ -66,7 +62,6 @@ Given below are my contributions to the project.
     `moduleCode != null`) to catch programming errors at the earliest possible point.
 
 - **Documentation:**
-
   - **User Guide:** 
     - Wrote full documentation for `done` (both paths, all error messages, usage examples) and `remove` (success and not-found outputs).
   - **Developer Guide:** 
