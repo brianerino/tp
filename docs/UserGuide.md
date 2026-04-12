@@ -59,7 +59,7 @@ PathLock is a **desktop app for planning your CEG modules**, optimised for use v
 > **Notes:**
 > - Words in `UPPER_CASE` are parameters to be supplied by you. e.g. in `done MODULE_CODE`, `MODULE_CODE` is a parameter such as `done CS2113`.
 > - Module codes must follow the NUS format: 2–3 uppercase letters, 4 digits, and an optional trailing letter (e.g. `CS2040C`, `EE2026`).
-> - Commands are **case-insensitive** for module codes (e.g. `done cs2113` works the same as `done CS2113`).
+> - Commands are **case-insensitive** — both command keywords and module codes can be typed in any case (e.g. `DONE cs2113`, `List Completed`, and `COUNT` all work).
 
 ---
 ### PathLock System Commands

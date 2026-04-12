@@ -30,7 +30,8 @@ public class Parser {
 
     public static Command parseCommand(String input) {
 
-        String normalised = input.trim().replaceAll("\\s+", " ");
+        String trimmed = input.trim().replaceAll("\\s+", " ");
+        String normalised = trimmed.toLowerCase();
 
         if (normalised.equals("list completed")) {
             return new ListCompletedCommand();
@@ -44,67 +45,68 @@ public class Parser {
             return new ListNeededCommand();
         }
 
-        if (input.equals("count")) {
+        if (normalised.equals("count")) {
             return new CountCommand();
         }
 
-        if (input.startsWith("done")) {
-            return parseDone(input);
+        if (normalised.startsWith("done")) {
+            return parseDone(trimmed);
         }
 
-        if (input.startsWith("remove")) {
-            if (input.length() < REMOVE_PREFIX_LENGTH) {
+        if (normalised.startsWith("remove")) {
+            if (trimmed.length() < REMOVE_PREFIX_LENGTH) {
                 throw new MissingCommandException("Please input module code after 'remove '");
             }
-            String moduleCode = input.substring(7).trim();
+            String moduleCode = trimmed.substring(7).trim();
             return new RemoveCommand(moduleCode);
         }
 
-        if (input.startsWith("switch")) {
-            if (input.length() < SWITCH_PREFIX_LENGTH) {
+        if (normalised.startsWith("switch")) {
+            if (trimmed.length() < SWITCH_PREFIX_LENGTH) {
                 throw new MissingCommandException("Please input username after 'switch '");
             }
-            String username = input.substring(7).trim();
+            String username = trimmed.substring(7).trim();
             return new SwitchUserCommand(username);
         }
         //trims out planner and reads subsequent command
-        if (input.startsWith("planner")) {
-            input = input.substring(7).trim();
-            String[] parts = input.split("\\s+");
-            if (input.equals("list")) {
+        if (normalised.startsWith("planner")) {
+            String subInput = trimmed.substring(7).trim();
+            String subNormalised = subInput.toLowerCase();
+            String[] parts = subInput.split("\\s+");
+            if (subNormalised.equals("list")) {
                 return new ListPlannerCommand();
             }
-            if (input.startsWith("add")) {
-                if (input.length() < ADD_PREFIX_LENGTH) {
+            if (subNormalised.startsWith("add")) {
+                if (subInput.length() < ADD_PREFIX_LENGTH - 7) {
                     throw new MissingCommandException("Please input module code and semester after 'add '");
                 }
-                String param = input.substring(4);
+                String param = subInput.substring(4);
                 int seperator = param.indexOf(" ");
                 String moduleCode = param.substring(0, seperator).trim();
                 String semester = param.substring(seperator).trim();
-                return new AddToPlannerCommand(moduleCode,semester);
+                return new AddToPlannerCommand(moduleCode, semester);
             }
-            if (input.startsWith("edit")) {
-                if (input.length() < EDIT_PREFIX_LENGTH) {
+            if (subNormalised.startsWith("edit")) {
+                if (subInput.length() < EDIT_PREFIX_LENGTH - 7) {
                     throw new MissingCommandException("Please input module code and semester after 'edit '");
                 }
-                String param = input.substring(5);
+                String param = subInput.substring(5);
                 int seperator = param.indexOf(" ");
                 String moduleCode = param.substring(0, seperator).trim();
                 String semester = param.substring(seperator).trim();
                 return new EditPlannerCommand(moduleCode, semester);
             }
-            if (input.startsWith("remove")) {
-                if (input.length() < REMOVE_PREFIX_LENGTH) {
+            if (subNormalised.startsWith("remove")) {
+                if (subInput.length() < REMOVE_PREFIX_LENGTH) {
                     throw new MissingCommandException("Please input module code after 'remove '");
                 }
-                String moduleCode = input.substring(7).trim();
+                String moduleCode = subInput.substring(7).trim();
                 return new RemoveFromPlannerCommand(moduleCode);
             }
-            if (input.startsWith("list plans")) {
+            if (subNormalised.startsWith("list plans")) {
                 return new PlannerListCommand();
             }
-            if (input.startsWith("switch")) {
+            if (subNormalised.startsWith("switch")) {
                 if (parts.length < PARTS_LENGTH) {
                     throw new IllegalArgumentException("Planner name required.");
                 }
@@ -115,11 +117,11 @@ public class Parser {
         }
 
         String prereqPrefix = "prereq ";
-        if (input.equals("prereq")) {
+        if (normalised.equals("prereq")) {
             throw new MissingCommandException("Please input module code after 'prereq '");
         }
-        if (input.startsWith(prereqPrefix)) {
-            String moduleCode = input.substring(prereqPrefix.length()).trim();
+        if (normalised.startsWith(prereqPrefix)) {
+            String moduleCode = trimmed.substring(prereqPrefix.length()).trim();
             if (moduleCode.isEmpty()) {
                 throw new MissingCommandException("Please input module code after 'prereq '");
             }
@@ -127,11 +129,11 @@ public class Parser {
         }
 
         String postreqPrefix = "postreq ";
-        if (input.equals("postreq")) {
+        if (normalised.equals("postreq")) {
             throw new MissingCommandException("Please input module code after 'postreq '");
         }
-        if (input.startsWith(postreqPrefix)) {
-            String moduleCode = input.substring(postreqPrefix.length()).trim();
+        if (normalised.startsWith(postreqPrefix)) {
+            String moduleCode = trimmed.substring(postreqPrefix.length()).trim();
             if (moduleCode.isEmpty()) {
                 throw new MissingCommandException("Please input module code after 'postreq '");
             }
@@ -143,7 +145,7 @@ public class Parser {
         }
 
         if (normalised.startsWith("help ")) {
-            String topic = input.substring(5).trim();
+            String topic = trimmed.substring(5).trim();
             if (topic.isEmpty()) {
                 return new HelpCommand();
             }
