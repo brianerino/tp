@@ -128,6 +128,11 @@ public class PathLock {
             System.out.print("Name cannot be empty. Enter your name: ");
             name = scanner.nextLine().trim();
         }
+        while (containsPipe(name)) {
+            System.out.print("Name cannot have |. Enter your name: ");
+            name = scanner.nextLine().trim();
+        }
+
         ProfileStorage profileStorage = new ProfileStorage(name);
         try {
 
@@ -224,5 +229,8 @@ public class PathLock {
 
             System.out.println("Invalid choice. Try again.");
         }
+    }
+    public static boolean containsPipe(String input) {
+        return input != null && input.contains("|");
     }
 }

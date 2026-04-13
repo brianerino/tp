@@ -110,6 +110,9 @@ public class Parser {
                 if (parts.length < PARTS_LENGTH) {
                     throw new IllegalArgumentException("Planner name required.");
                 }
+                if (containsPipe(parts[1])) {
+                    throw new IllegalArgumentException("Name cannot contain the '|' character.");
+                }
                 return new PlannerSwitchCommand(parts[1]);
             } else {
                 throw new IllegalArgumentException("Unknown planner command.");
@@ -193,6 +196,9 @@ public class Parser {
         }
 
         return new DoneCommand(moduleCode, mc);
+    }
+    public static boolean containsPipe(String input) {
+        return input != null && input.contains("|");
     }
 
 }
