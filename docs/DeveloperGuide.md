@@ -428,9 +428,21 @@ Using `markIncompleted()` rather than deleting the `Module` object keeps the `al
 The duplicate module check prevents a user from recording the same module as completed more than once. It is enforced inside `ModuleList` for both internal and external modules, and surfaces to the user as:
 `"Module <code> has already been completed"`.
 
+#### Design
+
+```
+PathLock (Main) → Parser → DoneCommand → ModuleList → DuplicateException → DoneCommand
+```
+
+The check lives entirely in `ModuleList`, keeping `DoneCommand` free of duplication logic. For internal modules, `addModule()` checks whether the module is already `COMPLETED` before calling `markCompleted()`. For external modules, `addExternalModule()` checks whether the code already exists in the `externalModules` map. In both cases, a `DuplicateException` is thrown and caught in `DoneCommand.execute()`, which returns the error message directly to the user.
+
 #### Sequence Diagram
 The diagram below shows duplicate module check path:
 ![Sequence Diagram for Duplicate Module Check](./Diagrams/SequenceDiagram_DuplicateModuleCheck.png)
+
+#### Why This Design?
+
+The check is placed in `ModuleList` because `addModule()` and `addExternalModule()` are the only entry points for marking a module complete, so no code path can bypass it. A checked `DuplicateException` is used instead of a boolean so that callers are forced to handle the failure explicitly.
 
 ---
 ## 5. Implementation: Brian
