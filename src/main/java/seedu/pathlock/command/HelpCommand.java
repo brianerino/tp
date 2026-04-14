@@ -35,7 +35,8 @@ public class HelpCommand extends Command {
         sb.append(dash + "\n");
         sb.append("PATHLOCK HELP\n");
         sb.append(dash + "\n");
-        sb.append("Type 'help <command>' to see details, examples, and sample output.\n");
+        sb.append("Type 'help <command>', ignoring CAPITAL ELEMENTS e.g. MODULE_CODE," +
+                " to see details, examples, and sample output.\n");
         sb.append("Example: help done\n\n");
 
         // List Commands

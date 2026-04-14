@@ -101,12 +101,12 @@ The `Command` component serves as the backbone of PathLock's execution model. Al
 User Input → PathLock → Parser → Command → AppState → Domain Component
 ```
 
-How the `Command` Component work:
+How the `Command` Component works:
 1. When the user enters a command, `PathLock` passes the raw input to `Parser`, which identifies the command type and constructs the corresponding `Command` object.
 2. Each command is a concrete subclass of the abstract `Command` class, falling into one of four groups:
     - **List Commands** — `ListCompletedCommand`, `ListIncompleteCommand`, `ListNeededCommand`
     - **Module Management Commands** — `DoneCommand`, `RemoveCommand`, `CountCommand`, `PrereqCommand`, `PostreqCommand`
-    - **Module Planner Commands** — `AddToPlannerCommand`, `RemoveFromPlannerCommand`, `EditPlannerCommand`, `ListPlannerCommand`, `PlannerSwitchCommand`
+    - **Module Planner Commands** — `AddToPlannerCommand`, `RemoveFromPlannerCommand`, `EditPlannerCommand`, `ListPlannerCommand`, `PlannerListCommand`, `PlannerSwitchCommand`
     - **PathLock System Commands** — `HelpCommand`, `SwitchUserCommand`
 3. `PathLock` calls `execute(appState)` on the returned command. Inside `execute()`, the command retrieves what it needs from `AppState` (via `getModule()`, `getPlanner()`, or `getProfile()`), then delegates the domain logic to the relevant component.
 4. Every `execute()` returns a `String` result, which `PathLock` prints to the user.
@@ -342,7 +342,7 @@ The diagram below shows the key classes involved in the `done` and `remove` comm
 
 The `done` command marks a module as completed and records it towards the user's graduation progress.
 
-- **Internal module** (e.g `done CS2113`): the MC value is lookup automatically from the moduel database.
+- **Internal module** (e.g `done CS2113`): the MC value is looked up automatically from the module database.
 - **External module** (e.g `done GEC1001`): the user must supply the MC count explicitly via `/mc`.
 
 #### Design
@@ -610,7 +610,7 @@ The diagram below show the key classes involved in `UserProfile` and `ProfileSto
 The `UserProfile` class stores the user's name and GPA, and uses the GPA to derive a recommended maximum semester workload in MCs. This profile is created once at startup, either loaded from file via `ProfileStorage`, or created fresh from user input.
 
 Each user profile is stored at:
-`data/users/<username>_profile.txt`
+`data/users/<username>profile.txt`
 
 Format:
 `NAME|GPA`
@@ -676,7 +676,7 @@ The module is always added. The warnings inform rather than block, keeping the u
 
 The diagram below shows the key classes involved in the `prereq`, `postreq`, and `count` commands and their relationships.
 
-![Class diagram of prereq, postreq and count commands](https://www.plantuml.com/plantuml/png/hLLTR-eu47tdLunuMTXxgUvzsOUeMvNIQhSI7sYXRvKgrnd0gcEdzaJgBjl_VcqJOqYGIgNoajXpVCwPoNW0kBR435M5x02G88amainQk1LiRLYHGMdGuEjtABMbyC9K3bnNYc2aYyAlmWcqdGx0HkG84vrN4XV4gB9G86rqRcEC2yCbkfLz4QfaJWAuFpuaCkAv8hpdMYt4VmW_F5-8GNVBdfqwu_J-g6hLBZ2xTx3jGFXz0tn3xbXwh2oz0SnWMB_rCrWu3RLssFV4FMV6eaaCM-l0Whz3wGErGCzvhIWIzBCetA0AfMfw6kmPfLwlqMGm3iyOBdord52EaJzQEUBhjN7z2FnqqYF__JvfzFCgSstfQmiI2R--8Z4SNKORMTtDOs4fag-HTfkzVYES20_spqqyXPUpvN3yzDS_mzk7uV9-DdsQZ1OP24Nm9_pyuqVqmQJSgLXdWvMNkxo-rz9NaHRV28rYvs1zQhkkguGLXFPKZUDBgnpsGKdDNp2_-VUSSs68JBZjfSY92gRgyNP730eUwXANvQ7t37prwqptrR1XB6L7GwgLYVUTR3N3p8mCveA2ywJUBbx_f8LlmheEBYKIvXxohBL4fcBogAe2kbl_GCD8QEM6tg7RCFaED_Obkf-EPfFv-6vvLs_4vMszde-7q-b-zJ1Dwo0TR-hb_uF1yJHh1jC0QSKQrzxnnXbxSN7Lc94PS8ECq1w30li7cAZIGdMW8UBGwNfdu62vXPNHHGUYqiV0AFSHzBHy6WRUA9FIFgfsjxJzd3wPBauqTfPQ-vBsdTkKnc3GEBhHqlzn7svsVtO3hljxjzxs4beH4of18M2EUzJHiV1nb7PQ4bS4UdL0dMKnhKvePVBDZnPkPik_8Ksw4FI9DgOQa0uXqiGay7Y_O3Ao5-5IvK5uRy28zQRbu5IH0kk2CsMz2oXgEQ5EcU8Rv2yMaF4DQ8M_xI97Kmcah-DA6w0DXl1hXKPW3dw-DRrUkqLLo5y0)
+![Class diagram of prereq, postreq and count commands](./Diagrams/ClassDiagram_PrereqPostreqCountCommands.png)
 
 ### `prereq` Command Implementation
 
@@ -712,7 +712,7 @@ Key design decisions:
 
 The diagram below shows the execution path for `prereq CS2113`:
 
-![Sequence Diagram for prereq Command](https://www.plantuml.com/plantuml/png/dLJDYjim4BxdAGQVl0UNtROdivWjs-CM2c4VGCZJHDIs76bK-lYLvOc5P2NGpI5XukzdvjF802-MX24t3WS0KZGW7F7YS988tvKu6J6sC1iqU85NFOvYwZrGID86tYqQNyoUhwIQnKHGjJy5dT-q_5s1i70j2YZZoOmnHPtWoPO1cFopmt-RvoC9mW2z5ZlK3zsx0T-KfO2BvGraHE7X065YQBfjBcYXkePp_FpqzALQmr5_lFc6yip826opwBIBeqKUgCw47b8bpaWQ37KM1IisNVh4Mpm_hvIkgwkYSgwKy9kcYzuzCkksVngD7Fk4nh0yZhnb_8lI4TQ23_5El_k6k-tilT89QJsxEj68sn71JQ6HCN0jpv2HYzvndrRt5U2KLOIsV02HiYYAWTWM9atmIxibt_29m6ApB0xA1gO0WrAV9cMnPyLFotBYO97h6-fnZj8C3upF-azKeCcZM5TxAHZOOr4Wp3zfnhCdF_gF3Cx2xbJ2z02SW4Tys2G9n8Te-Cgso-_ZryVNpScdktxp2XMFFDNFhf11wmQwS_dIo-J9x_ngCMeYM-R7b_ABRywDmpy0)
+![Sequence Diagram for prereq Command](./Diagrams/SequenceDiagram_PrereqCommand.png)
 
 #### Why This Design?
 
@@ -751,7 +751,7 @@ Identical pattern to `prereq` — checks for the `postreq ` prefix and throws `M
 
 The diagram below shows the execution path for `postreq CS1010`:
 
-![Sequence Diagram for postreq Command](https://www.plantuml.com/plantuml/png/dLHBRjim4Dtp50EjNA0sdA8hBuAqwJ810XW-04jD8w8KgP2ZeZvJZz1TJjQHJB4KGs-oicczptipeky2IKzZRmHfCWX7V1dHAeHlMZvxsHzWS84yli2zwtjfMo4LEG-dW5uCJDLA3z8ID8SdITs3KpyRa06MmnkCPs94-8h6nInwpRZrJmN-op0SIHBEoELGO1vTEnfyq85crFzZ5PTXX9XQmlOsjO43D6aUnvlzpRwPvg5_iMi22P7WJBtKPE8mVOajDgNAXoGJ2K9vv5FPFggnxle1wx_-kL1U_swQGhMYisPlKr3HOiaflTVpK7sRSw9A6a4rAlv6DH9kP5pOzPnlWjwcBRFECz9bKvjC8Rq52RYjPUXdOiYo9sR5DNjhSjzmiePBOllrN1bwHXB2E3S0UtNH6RG5QKpK4G2GmPDZRFdaaUECEcZ2m6KdTE6IAS2s33pC_EammrgianEZvAiEUPNwHoO4obcIsWPOYjTIrItJ4vnMB0s1TSj2O8mZBJBLjnYzeNNCj8uY6wGzWwCE_IAxQmIQWD39y4wdnu85ty_nzXxuyzF-y_x-8-nsR3IrglUjtxjqbpo6qT3rAvXVAsQUuX-BrvP2ZHp1ueuJZRtv1m00)
+![Sequence Diagram for postreq Command](./Diagrams/SequenceDiagram_PostreqCommand.png)
 
 #### Why This Design?
 
@@ -786,7 +786,7 @@ PathLock (Main) → Parser → CountCommand → AppState → ModuleList
 
 The diagram below shows the execution path for `count`:
 
-![Sequence Diagram for count Command](https://www.plantuml.com/plantuml/png/TP91RiCW44Ntd6BaLRh81LX4gT9b8bMASW24HocgiLqOgjwfH-Wk9wl1X8nDkpFsU_xpWRqdvIZOJf2X3k6C7m5xZV1YrDKfAq4FeISu3DQglXLAq-3Wuj69SHADDgEQFZVoLT7RST3l3IWFzqN5k4dCXAl_SOXHEIbH_CMAVHx7Cod2nDqNA-OqjA73e_6KgCTIYDW0jhioAKXeKjCcLZIVYl3HGXGg6Iww4iRua8VRPFc9swcXTZYjbatIfnJFNuE4s_UCttus-K-Lkp2sPHxHOitph6LNRLjkp13lMOs6NwW3uKRbhVvlljM0kt8s8E6AD9y1RrVEhe3REjqcpREPYrSbidE6V7rFshD81WZ6_X7hq8UEM2fJrxbyWokpsgM2Hk-IBvGpFNccLXTnZtqRRFSB)
+![Sequence Diagram for count Command](./Diagrams/SequenceDiagram_CountCommand.png)
 
 #### Why This Design?
 
@@ -1017,6 +1017,10 @@ The diagram below shows the sequence of action upon the user inputting `planner 
 ### Target user profile
 - Y1-Y4 Computer Engineering Undergraduate Students (JC path)
 - Did not follow the recommended TimeTable
+## 8. Product Scope
+### Target user profile
+- Y1-Y4 Computer Engineering Undergraduate Students (JC path)
+- Does not follow the recommended timetable
 - Has a need to manage complex multi-year university pathways
 - Can type fast
 - Is reasonably comfortable using CLI apps
@@ -1092,7 +1096,7 @@ database or internet connection.
 
 ---
 
-## 13. Instructions for manual testing
+## 13. Instructions For Manual Testing
 
 Given below are instructions to test the app manually. These instructions provide a starting point;
 testers are expected to do more exploratory testing.

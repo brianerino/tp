@@ -165,38 +165,38 @@ public class Parser {
 
         String remaining = input.substring(4).trim();
 
-        String moduleCode;
-        Integer mc = null;
-
-        if (remaining.contains("/mc")) {
-            String[] parts = remaining.split("/mc", 2);
-
-            moduleCode = parts[0].trim();
-
-            if (moduleCode.isEmpty()) {
-                throw new IllegalArgumentException(
-                        "Please provide a module code before /mc. Example: done CS2113 /mc 4");
-            }
-
-            String mcPart = parts.length > 1 ? parts[1].trim() : "";
-
-            if (mcPart.isEmpty()) {
-                throw new IllegalArgumentException(
-                        "Please provide a number after /mc. Example: done CS2113 /mc 4");
-            }
-
-            try {
-                mc = Integer.parseInt(mcPart);
-            } catch (NumberFormatException e) {
-                throw new IllegalArgumentException(
-                        "MC must be a whole number, but got: \"" + mcPart + "\". Example: done CS2113 /mc 4");
-            }
-        } else {
-            moduleCode = remaining;
+        if (!remaining.contains("/mc")) {
+            return new DoneCommand(remaining, null);
         }
+
+        String[] parts = remaining.split("/mc", 2);
+        String moduleCode = parts[0].trim();
+
+        if (moduleCode.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "Please provide a module code before /mc. Example: done CS2113 /mc 4");
+        }
+
+        String mcPart = parts.length > 1 ? parts[1].trim() : "";
+        Integer mc = extractMcValue(mcPart);
 
         return new DoneCommand(moduleCode, mc);
     }
+
+    private static Integer extractMcValue(String mcPart) {
+        if (mcPart.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "Please provide a number after /mc. Example: done CS2113 /mc 4");
+        }
+
+        try {
+            return Integer.parseInt(mcPart);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException(
+                    "MC must be a whole number, but got: \"" + mcPart + "\". Example: done CS2113 /mc 4");
+        }
+    }
+
     public static boolean containsPipe(String input) {
         return input != null && input.contains("|");
     }
