@@ -212,11 +212,11 @@ CS1231|4
 ```
 
 #### Sequence Diagram:
-Mod Load:
-![Mod Load](Diagrams/SequenceDiagramModStorageLoad.png)
+Mod Load completed at the start of the Program :
+![Mod Load](Diagrams/ModStorageLoad.png)
 
-Mod Save:
-![Mod Save](Diagrams/SequenceDiagramModStorageSave.png)
+Mod Save when command makes changes to the completed list:
+![Mod Save](Diagrams/ModStorageSave.png)
 
 ---
 
@@ -261,10 +261,10 @@ Username|GPA
 
 #### Sequence Diagram:
 
-Profile Load:
-![](Diagrams/SequenceDiagramProfileStorageLoad.png)
-Profile Save:
-![](Diagrams/SequenceDiagramProfileStorageSave.png)
+Profile Load when program detects that the profile exist:
+![](Diagrams/ProfileStorageLoad.png)
+Profile Save when User creates his new Profile:
+![](Diagrams/ProfileStorageSave.png)
 
 
 ---
@@ -322,11 +322,11 @@ CS2113|y2s2|4
 
 #### Sequence Diagram:
 
-Planner Load:
-![Planner Load](Diagrams/SequenceDiagramPlannerStorageLoad.png)
+Planner Load when program start:
+![Planner Load](Diagrams/PlannerStorageLoad.png)
 
-Planner Save:
-![Planner Save](Diagrams/SequenceDiagramPlannerStorageSave.png)
+Planner Save when a command makes changes to list:
+![Planner Save](Diagrams/PLannerStorageSave.png)
 ---
 ## 4. Implementation: Shi Yong
 
