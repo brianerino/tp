@@ -40,6 +40,8 @@
     - [`planner add` Command Implementation](#planner-add-command-implementation)
     - [`planner remove` Command Implementation](#planner-remove-command-implementation)
     - [`planner edit` Command Implementation](#planner-edit-command-implementation)
+    - [`planner switch` Command Implementation](#planner-switch-command-implementation)
+    - [`planner list plans` Command Implementation](#planner-list-plans-command-implementation)
 
 8. [Product Scope](#8-product-scope)
     - [Target User Profile](#target-user-profile)
