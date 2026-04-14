@@ -123,26 +123,20 @@ If the name is found in storage, the program loads all saved data under that pro
 Enter your name: russell
 Enter your GPA (2.0 to 5.0): 4.5
 Profile saved for russell.
-Mar 31, 2026 9:49:27 PM seedu.pathlock.storage.ProfileStorage saveProfile
-INFO: Saved profile for user: russell
 Recommended max semester workload: 32 MCs
-=======================================================================
-Mar 31, 2026 9:49:27 PM seedu.pathlock.module.ModuleLoader loadModules
-INFO: Loaded 34 modules from JSON
-Mar 31, 2026 9:49:27 PM seedu.pathlock.storage.ModStorage load
-INFO: Loading modules from file: data/users/russell_modules.txt
-Mar 31, 2026 9:49:27 PM seedu.pathlock.storage.ModStorage load
-WARNING: Module file not found. Created new file at data/users/russell_modules.txt
 ```
 **Example output (existing profile):**
 
 ```
 Enter your name: russell
-Mar 31, 2026 10:06:14 PM seedu.pathlock.storage.ProfileStorage loadProfile
-INFO: Loaded profile for user: russell
 Welcome back, russell!
 Saved GPA: 4.50
 Recommended maximum semester workload: 32 MCs
+=======================================================================
+Available plans:
+1. plan1
+Select a plan by number: 1
+Loaded plan: plan1
 ```
 ---
 
@@ -449,8 +443,6 @@ Allows the user to add modules for a specific semester in the planner
 =======================================================================
 Module CG1111A added to y1s1.
 Current workload for y1s1: 4 MCs
-[INFO] Maximum workload based on GPA 4.09: 28 MCs
-[WARNING] You are below the minimum workload of 18 MCs for this semester.
 =======================================================================
 ```
 > **Note:** modules and semesters are not cap sensitive, year and semester to be together i.e. `y2s2` not `y2 s2`
